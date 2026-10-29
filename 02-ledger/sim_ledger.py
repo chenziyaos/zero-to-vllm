@@ -30,7 +30,8 @@ BLOCK = 16  # DEFAULT_BLOCK_SIZE
 
 
 def ledger(model, gpu, tp=1, util=0.92, weight_dtype='bf16', kv_dtype='bf16', avg_ctx=2048,
-           act_gib=None, nontorch_gib=0.6, graph_gib=0.5, max_batched_tokens=8192, total_gib=None):
+           act_gib=None, nontorch_gib=0.6, graph_gib=0.5, max_batched_tokens=8192, total_gib=None,
+           max_model_len=40960):
     # 厂商标称的 "80GB" 实际接近 80 GiB，驱动扣掉保留区后 torch 看到的 total_memory 再少 1% 左右。
     # 要精确对账，用 python -c "import torch;print(torch.cuda.mem_get_info()[1]/2**30)" 的值传 --total-gib。
     total = (total_gib if total_gib else gpu.mem_gb * 0.99) * GiB
@@ -48,9 +49,15 @@ def ledger(model, gpu, tp=1, util=0.92, weight_dtype='bf16', kv_dtype='bf16', av
     kv_tok = model.kv_bytes_per_token(DTYPE[kv_dtype])
     if not model.mla_kv_rank:
         kv_tok /= min(tp, model.kv_heads)
-    # vLLM 按块分配：块数向下取整，再乘回块大小得到 token 数
+    # vLLM 按块分配：块数向下取整。BlockPool 启动时永久拿走 1 块当 null block（kv_cache_planning.py
+    # 的检查和 auto-fit 都先扣掉它），所以调度器能分出去的是 blocks - 1。
+    # 日志里的 GPU KV cache size 按 kv_cache_utils.get_kv_cache_capacity 算：
+    #   并发 = blocks / cdiv(max_model_len, BLOCK)，token = int(并发 x max_model_len)，不扣 null block。
     blocks = int(kv_pool // (kv_tok * BLOCK)) if kv_pool > 0 else 0
-    kv_tokens = blocks * BLOCK
+    usable_blocks = max(blocks - 1, 0)
+    conc = blocks / -(-max_model_len // BLOCK)
+    log_tokens = int(conc * max_model_len)
+    kv_tokens = usable_blocks * BLOCK
 
     # decode 一步把本卡权重读一遍，再读 batch 内全部 KV；按带宽算理论下限时延。
     # MoE 只按激活参数计，相当于 batch 很小、专家几乎不重叠，batch 变大后会偏乐观，第 11 章细算。
@@ -65,7 +72,8 @@ def ledger(model, gpu, tp=1, util=0.92, weight_dtype='bf16', kv_dtype='bf16', av
         rows.append((bs, t * 1e3, bs / t, flops / bytes_step))
     return dict(requested_gib=requested / GiB, weights_gib=w_bytes / GiB, act_gib=act_gib,
                 nontorch_gib=nontorch_gib, graph_gib=graph_gib, kv_gib=kv_pool / GiB,
-                kv_bytes_per_token=kv_tok, blocks=blocks, kv_tokens=kv_tokens,
+                kv_bytes_per_token=kv_tok, blocks=blocks, usable_blocks=usable_blocks, kv_tokens=kv_tokens,
+                log_tokens=log_tokens, concurrency=conc,
                 max_reqs=kv_tokens // avg_ctx, decode=rows, ridge=gpu.ridge)
 
 
@@ -84,10 +92,12 @@ def main():
     ap.add_argument('--nontorch-gib', type=float, default=0.6)
     ap.add_argument('--graph-gib', type=float, default=0.5, help='CUDA Graph 显存估计，--enforce-eager 时填 0')
     ap.add_argument('--total-gib', type=float, help='torch 报告的单卡总显存，默认按标称容量的 99%% 估')
+    ap.add_argument('--max-model-len', type=int, default=40960, help='决定日志里的 Maximum concurrency')
     a = ap.parse_args()
     m, g = MODELS[a.model], GPUS[a.gpu]
     L = ledger(m, g, a.tp, a.util, a.weight_dtype, a.kv_dtype, a.avg_ctx,
-               a.act_gib, a.nontorch_gib, a.graph_gib, a.max_batched_tokens, a.total_gib)
+               a.act_gib, a.nontorch_gib, a.graph_gib, a.max_batched_tokens, a.total_gib,
+               a.max_model_len)
     print(f'{m.name} on {a.tp} x {g.name}  weight={a.weight_dtype} kv={a.kv_dtype} util={a.util}')
     print(f'  requested       {L["requested_gib"]:8.2f} GiB  (总显存 x util)')
     print(f'  - 权重          {L["weights_gib"]:8.2f} GiB')
@@ -96,7 +106,8 @@ def main():
     print(f'  - CUDA Graph    {L["graph_gib"]:8.2f} GiB')
     print(f'  = KV 可用       {L["kv_gib"]:8.2f} GiB  ← 对照日志 Available KV cache memory')
     print(f'  每 token KV     {L["kv_bytes_per_token"] / 1024:8.1f} KiB（每卡）')
-    print(f'  KV 块 / token   {L["blocks"]:8d} 块 x {BLOCK} = {L["kv_tokens"]:,} token  ← 对照 GPU KV cache size')
+    print(f'  KV 块           {L["blocks"]:8d} 块（含 1 块 null block，可分配 {L["usable_blocks"]} 块 = {L["kv_tokens"]:,} token）')
+    print(f'  日志口径        {L["log_tokens"]:,} token，{L["concurrency"]:.2f}x @ {a.max_model_len}  ← 对照 GPU KV cache size')
     print(f'  按 {a.avg_ctx} token/请求  最多并发 {L["max_reqs"]} 个请求')
     print(f'  Roofline 拐点   {L["ridge"]:8.0f} FLOP/Byte')
     if L['kv_tokens'] == 0:
