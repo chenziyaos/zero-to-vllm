@@ -43,8 +43,10 @@
 | `18-observability/` | VLLM-18 可观测与 profiling | 指标抓取与 trace 分析 |
 | `19-cluster-rl/` | VLLM-19 集群与 RL | 路由策略模拟、sleep mode |
 | `20-contrib/` | VLLM-20 读源码与提 PR | 插件加载模拟、CI 选择复刻、PR 自查、可安装的插件示例 |
+| `21-frontier-month/` | VLLM-21 一个月主干复盘 | 30 天提交快照、主题分桶、发行说明覆盖率、标题检索 |
+| `22-deepseek-impact/` | VLLM-22 DeepSeek 开源对 vLLM 的影响 | KV 字节账、EPLB 移植、有界重放与自适应验证模拟、组件接入对照 |
 
-20 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
+22 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
 
 ## 快速试跑
 
