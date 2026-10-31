@@ -42,9 +42,9 @@
 | `17-tuning/` | VLLM-17 调参手册 | 调参记录模板与扫描脚本 |
 | `18-observability/` | VLLM-18 可观测与 profiling | 指标抓取与 trace 分析 |
 | `19-cluster-rl/` | VLLM-19 集群与 RL | 路由策略模拟、sleep mode |
-| `20-contrib/` | VLLM-20 读源码与提 PR | 定位脚本、插件示例、PR 清单 |
+| `20-contrib/` | VLLM-20 读源码与提 PR | 插件加载模拟、CI 选择复刻、PR 自查、可安装的插件示例 |
 
-目录会随章节发布逐个填满，还没发布的章节目录里只有一份 README 写明计划。
+20 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
 
 ## 快速试跑
 
