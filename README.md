@@ -52,7 +52,7 @@
 ## 快速试跑
 
 ```bash
-cd zero-to-vllm/02-ledger
+cd 02-ledger
 python3 sim_ledger.py --model qwen3-8b --gpu h100-sxm
 python3 sim_ledger.py --model llama3.1-70b --gpu h100-sxm --tp 4 --kv-dtype fp8
 ```
@@ -60,7 +60,7 @@ python3 sim_ledger.py --model llama3.1-70b --gpu h100-sxm --tp 4 --kv-dtype fp8
 起服务（需要 GPU）：
 
 ```bash
-cd zero-to-vllm/01-first-server
+cd 01-first-server
 bash serve.sh                     # 默认 Qwen/Qwen3-8B，端口 8000
 python3 smoke_test.py
 ```
@@ -71,4 +71,4 @@ python3 smoke_test.py
 - nano-vllm：https://github.com/GeeeekExplorer/nano-vllm
 - 官方文档：https://docs.vllm.ai/
 - PagedAttention 论文：https://arxiv.org/abs/2309.06180
-- 同系列 SGLang 对照代码：`../zero-to-sglang`
+- 同系列 SGLang 对照代码：[chenziyaos/zero-to-sglang](https://github.com/chenziyaos/zero-to-sglang)
