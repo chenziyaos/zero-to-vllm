@@ -46,6 +46,7 @@
 | `21-frontier-month/` | VLLM-21 一个月主干复盘 | 30 天提交快照、主题分桶、发行说明覆盖率、标题检索 |
 | `22-deepseek-impact/` | VLLM-22 DeepSeek 开源对 vLLM 的影响 | KV 字节账、EPLB 移植、有界重放与自适应验证模拟、组件接入对照 |
 | `23-deepseek-v41-deploy/` | VLLM-23 DeepSeek-V4.1-Flash 部署实战 | 显存账、kernel 路由、主机内存与 decode 估算、选卡排序、启动与压测脚本 |
+| `24-qwen3-32b-deploy/` | VLLM-24 Qwen3-32B 部署实战 | 显存账、量化格式与 kernel、TP2 对比、decode 估算、选卡排序、启动与压测脚本 |
 
 23 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
 
