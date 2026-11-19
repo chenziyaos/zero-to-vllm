@@ -1,0 +1,9 @@
+[
+    {"_benchmark_name": "b2048_s256",  "max_num_batched_tokens": 2048,  "max_num_seqs": 256},
+    {"_benchmark_name": "b4096_s256",  "max_num_batched_tokens": 4096,  "max_num_seqs": 256},
+    {"_benchmark_name": "b8192_s256",  "max_num_batched_tokens": 8192,  "max_num_seqs": 256},
+    {"_benchmark_name": "b8192_s1024", "max_num_batched_tokens": 8192,  "max_num_seqs": 1024},
+    {"_benchmark_name": "b16384_s1024","max_num_batched_tokens": 16384, "max_num_seqs": 1024},
+    {"_benchmark_name": "b2048_s256_thr1024", "max_num_batched_tokens": 2048, "max_num_seqs": 256,
+     "long_prefill_token_threshold": 1024}
+]

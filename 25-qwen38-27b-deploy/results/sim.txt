@@ -1,0 +1,98 @@
+-- 六种 checkpoint 的磁盘字节（HF 树上 safetensors 相加，2026-11-03 核对）
+   格式                           GB     GiB    bit/参数    recipe 最小显存 GB
+   BF16 官方原版                 55.56   51.75     16.46                67
+   FP8 官方 block 缩放           30.87   28.75      9.15                38
+   NVFP4 Inferact W4A4       26.38   24.57      7.82                32
+   NVFP4 nvidia 混合精度         21.92   20.42      6.50                32
+   INT4 RedHatAI W4A16       19.45   18.12      5.76                24
+   MXFP4 RedHatAI W4A4       19.83   18.47      5.88                24
+   Ascend w8a8（Eco-Tech，ModelScope）32.1 GB，recipe vram_minimum_gb 39，视觉塔留 BF16、带 per-channel fp32 scale
+   各仓库量化覆盖范围不同；文件平均 bit/参数不能代替逐层 dtype 清单
+   对照 Qwen3.5-27B GPTQ-Int4：28.16 GiB，小于当前 FP8 28.75 GiB，大于表内四种 4 bit 档
+   recipe 最小显存是上游声明值，不是启动保证；其注释公式 ceil(磁盘 GB ×1.2) 与部分条目不一致
+-- 一层 GDN 一条序列的状态（conv 历史 + fp32 时间状态矩阵）
+   TP1：conv   60.0 KiB + 时间状态   3072.0 KiB =  3132.0 KiB/层
+-- 整条序列 48 层的 GDN 状态，和上下文长度无关
+   模式         TP1 k=0     TP1 k=3     TP2 k=3
+   none           147         598         299  MiB/序列
+   align          294         748         374  MiB/序列
+   none 占 1+k 页，align（--enable-prefix-caching）占 2+k 页，每页一整层状态
+   262K 长上下文也只多这么点，这是 GDN 相对全注意力模型省显存的地方
+-- 混合层块大小：一块注意力 KV 必须装下一整页 GDN 状态（2×5090 recipe 示例 k=3）
+   TP1 KV bf16 k=0 对齐 16：块   784 token（无 MTP，默认对齐 16）
+   TP1 KV bf16 k=3 对齐 16：块   800 token（默认 MTP k=3）
+   TP1 KV bf16 k=3 对齐 64：块   832 token（FlashInfer GDN prefill，gdn_attn.py:34）
+   TP2 KV fp8  k=3 对齐 16：块  1600 token（2×5090 TP2，fp8 KV）
+   TP2 KV fp8  k=3 对齐 64：块  1600 token（2×5090 TP2，64 对齐）
+   TP1 KV fp8  k=3 对齐 16：块  1600 token（1×5090 单卡，fp8 KV）
+   块这么大是因为 fp32 时间状态一页就 3.0 MiB（TP1），普通稠密模型的块通常只有 16 token
+-- 全注意力 KV：只有 16 层，每层 4 KV 头 × 256 头维
+   bf16 64 KiB/token，fp8 32 KiB/token
+   一条   32768 上下文：bf16   2.00 GiB，fp8   1.00 GiB
+   一条  262144 上下文：bf16  16.00 GiB，fp8   8.00 GiB
+   一条 1000000 上下文：bf16  61.04 GiB，fp8  30.52 GiB
+   再加 GDN 固定状态 147 MiB，和长度无关
+   对照 Qwen3-32B（64 层全注意力、8 KV 头、头维 128）：每 token 256 KiB，4 倍
+   1M 走 YaRN：factor 4.0，override 要嵌在 text_config 下面，524K 的活把 factor 减半到 2.0
+-- H100 80G ×1 TP1，fp8 权重，KV bf16，gmu 0.92（估算）
+   可用   72.8 GiB，权重   28.7，其他   4.1，KV 池   39.9
+   每条序列 GDN 固定状态    147 MiB（none 模式，k=0）
+   KV 池折算   0.65 M token（bf16）
+     32K 上下文：每条  2.14 GiB，并发 18.64
+    128K 上下文：每条  8.14 GiB，并发  4.90
+    256K 上下文：每条 16.14 GiB，并发  2.47
+-- 上游 recipe 记录，非本次 GPU 实测；不使用反推折减系数作验证
+   来源：https://github.com/vllm-project/recipes/blob/0511d96d97551a8b0db969b9b179e6f6d198071d/models/Qwen/Qwen3.8-27B.yaml
+   2×5090 TP2，262144 上下文；版本 0.26.1rc1.dev608+g99a10304d
+   格式                  权重/卡 GiB   KV token   接受率
+   FP8 官方                   14.28      377456    0.771
+   NVFP4 Inferact           12.02      445875    0.897
+   NVFP4 unsloth            10.64      920517    0.788
+   1×5090 Inferact NVFP4，32768 上下文，eager；recipe 的逐项记录：
+   eager + fp8 KV                   91022
+   加 text-only                     135926
+   再限 max-num-seqs=8               152917
+   bf16 KV 对照                       76458
+   MTP 对照                           90112
+   这些行不是严格单变量试验；没有完整环境日志，不推导差值的单一原因。
+   独立显存估算见 mem/rank；运行态权重、状态页池、padding 与分配器差额需启动日志校正。
+-- 各档配置（上下文按档不同，见每行标注；并发 < 1 = 一条都装不下；原始字节估算）
+   配置                                权重/卡   KV 池    每条@ctx    并发  结论
+   1×4090 INT4                       18.1    2.2     16.14  0.14  256K 不足一条；32K 原始预算 1 条；权重塞得进，Ada 的 W4A16 不在 recipe 验证名单
+   1×4090 NVFP4                      24.6   -4.2      8.14  0.00  起不来：sm89 没有 Blackwell FP4 W4A4 kernel
+   1×5090 FP8                        28.7   -1.3      8.14  0.00  起不来：gmu 0.90 下权重 28.7 GiB 已超可用，无 KV 池
+   1×5090 NVFP4                      24.6    2.9      1.14  2.56  32K 原始字节预算 2 条；上游记录：eager、32K 可起；非唯一可行配置
+   1×L40S INT4                       18.1   21.0     16.14  1.30  256K 原始字节预算 1 条；显存放得下，sm89 kernel 未验证
+   2×5090 TP2 FP8                    14.4   12.8      4.29  2.98  256K 原始字节预算 2 条；262K verified，接受率 0.771
+   2×5090 TP2 NVFP4                  12.3   14.9      4.29  3.47  256K 原始字节预算 3 条；262K verified，接受率 0.897
+   1×PRO 6000 BF16                   51.7   31.8      8.14  3.91  256K 原始字节预算 3 条；96G 单卡，recipe verified
+   1×A100 BF16                       51.7   17.6     16.14  1.09  256K 原始字节预算 1 条；262K 一条，剩一点池
+   1×H100 FP8                        28.7   40.5      8.14  4.98  256K 原始字节预算 4 条；主力档
+   1×H100 INT4                       18.1   51.2      8.14  6.28  256K 原始字节预算 6 条；Marlin W4A16
+   1×H100 MXFP4                      18.5   50.8      8.14  6.24  256K 原始字节预算 6 条；Hopper 退化为 Marlin W4A16
+   1×H20 FP8                         28.7   54.9      8.14  6.74  256K 原始字节预算 6 条；带宽大，并发吃 KV 池
+   1×H200 BF16                       51.7   72.7      8.14  8.93  256K 原始字节预算 8 条；141G，长上下文主力
+   1×B200 BF16                       51.7  105.4      8.14 12.94  256K 原始字节预算 12 条；180G，1M YaRN 也有余量
+   1×B200 MXFP4                      18.5  138.7      8.14 17.03  256K 原始字节预算 17 条；真 W4A4，2026-09-20 verified
+   TP 必须满足 Q/KV/GDN 头数约束；本估算器只覆盖 TP1/2/4。2机×8卡的 TP16 不适用，不能推广为所有多机 TP 不可用。
+-- 自带 MTP 草稿头：recipe 示例 k=3，PRO 6000 / DGX Spark 用 k=5
+     k    TP1 状态 MiB    TP2 状态 MiB
+     0           147            73
+     1           296           148
+     3           598           299
+     5           909           454
+   每个草稿位的 conv 增量为 TP1 20 KiB/层；普通 MTP 状态页数也增加，ReplaySSM 不在本模型范围。
+   草稿头和主干共享 embed，顶层 config 没有 mtp_num_hidden_layers；要开草稿必须显式写 num_speculative_tokens，不写就是普通解码
+   实测短 prompt 接受率：BF16 92.2%，FP8 84.8%，NVFP4 81.5–84.8%；2×5090 FP8 实测 0.771、Inferact 0.897、unsloth 0.788
+   接受率要从 vllm:spec_decode_num_accepted_tokens_total 和 vllm:spec_decode_num_draft_tokens_total 两个指标算，吞吐看不出草稿有没有生效
+   recipe 留有 GDN 投机修复 #51812 / #51674 的历史提示；必须按实际镜像 commit 核验，不据此断言当前发行版均不支持。
+   外挂草稿：DFlash2（incoai/Qwen3.8-27B-DFlash2）k=7，需要 vllm#52816（≥0.28.0）；DSpark（RedHatAI speculator.dspark）k=8
+-- 单流 decode 带宽估算（η=0.75，32K 上下文，无投机基线，估算）
+   1×5090 NVFP4            21.0 ms/步，  47.5 tok/s
+   1×H100 FP8              13.3 ms/步，  75.3 tok/s
+   1×H100 BF16             23.5 ms/步，  42.5 tok/s
+   1×H20 FP8               11.2 ms/步，  89.3 tok/s
+   1×B200 NVFP4             5.1 ms/步， 196.0 tok/s
+   2×5090 TP2 NVFP4        14.0 ms/步，  71.6 tok/s
+   Ascend 950PR 实测单流 64 tok/s（2048 token 输出、单请求、MTP 开）；上面的无投机估算只给量级，开 MTP 后一步出多个 token
+   147 MiB 的 GDN 状态和 32K 上下文约 1 GiB 的 KV，在权重读取面前都是零头

@@ -1,0 +1,41 @@
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]        █     █     █▄   ▄█
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.32.0
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]   █▄█▀ █     █     █     █  model   Qwen/Qwen3-8B
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:38]
+(APIServer pid=12301) INFO 10-29 10:15:03 [startup.py:96] non-default args: {'model_tag': 'Qwen/Qwen3-8B', 'host': '0.0.0.0', 'enable_auto_tool_choice': True, 'tool_call_parser': 'hermes', 'model': 'Qwen/Qwen3-8B', 'served_model_name': ['qwen3'], 'reasoning_parser': 'qwen3'}
+(APIServer pid=12301) INFO 10-29 10:15:09 [model.py:751] Resolved architecture: Qwen3ForCausalLM
+(APIServer pid=12301) INFO 10-29 10:15:09 [model.py:2177] Using max model len 40960
+(APIServer pid=12301) INFO 10-29 10:15:09 [scheduler.py:311] Chunked prefill is enabled with max_num_batched_tokens=8192.
+(EngineCore pid=12388) INFO 10-29 10:15:17 [core.py:146] Initializing a V1 LLM engine (v0.32.0) with config: model='Qwen/Qwen3-8B', speculative_config=None, tokenizer='Qwen/Qwen3-8B', ... (略)
+(EngineCore pid=12388) INFO 10-29 10:15:19 [gpu_worker.py:513] Using V2 Model Runner
+(EngineCore pid=12388) INFO 10-29 10:15:20 [cuda.py:513] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=12388) INFO 10-29 10:15:20 [model_runner.py:402] Loading model from scratch...
+(EngineCore pid=12388) INFO 10-29 10:15:31 [default_loader.py:506] Loading weights took 10.42 seconds
+(EngineCore pid=12388) INFO 10-29 10:15:31 [model_runner.py:434] Model loading took 15.27 GiB memory and 11.284317 seconds
+(EngineCore pid=12388) INFO 10-29 10:15:39 [backends.py:1125] Using cache directory: /root/.cache/vllm/torch_compile_cache/5c1e0f3a9b/rank_0_0/backbone for vLLM's torch.compile
+(EngineCore pid=12388) INFO 10-29 10:15:39 [backends.py:1187] Dynamo bytecode transform time: 7.61 s
+(EngineCore pid=12388) INFO 10-29 10:15:52 [backends.py:401] Cache the graph of compile range (1, 8192) for later use
+(EngineCore pid=12388) INFO 10-29 10:16:13 [backends.py:417] Compiling a graph for compile range (1, 8192) takes 33.48 s
+(EngineCore pid=12388) INFO 10-29 10:16:13 [monitor.py:62] torch.compile took 41.09 s in total
+(EngineCore pid=12388) INFO 10-29 10:16:21 [gpu_worker.py:775] Available KV cache memory: 54.84 GiB
+(EngineCore pid=12388) INFO 10-29 10:16:21 [gpu_worker.py:790] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9200 is equivalent to --gpu-memory-utilization=0.9110 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9290. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=12388) INFO 10-29 10:16:21 [kv_cache_utils.py:1147] GPU KV cache size: 399,312 tokens, Maximum concurrency for 40,960 tokens per request: 9.75x
+(EngineCore pid=12388) INFO 10-29 10:16:21 [gpu_worker.py:974] Compile and warming up model for size 8192
+Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:04<00:00, 11.62it/s]
+Capturing CUDA graphs (FULL): 100%|██████████| 51/51 [00:02<00:00, 21.37it/s]
+(EngineCore pid=12388) INFO 10-29 10:16:30 [model_runner.py:1195] Graph capturing finished in 7 secs, took 0.68 GiB
+(EngineCore pid=12388) INFO 10-29 10:16:30 [gpu_worker.py:1006] CUDA graph pool memory: 0.68 GiB (actual), 0.71 GiB (estimated), difference: 0.03 GiB (4.4%).
+(EngineCore pid=12388) INFO 10-29 10:16:30 [gpu_worker.py:1069] Free memory on device (78.7/79.2 GiB) on startup. Desired GPU memory utilization is (0.92, 72.87 GiB). Actual usage is 15.89 GiB for consumed memory (weights + non-torch), 2.14 GiB for peak activation, and 0.68 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=57994617159` (54.01 GiB) to fit into requested memory, or `--kv-cache-memory=64261364776` (59.85 GiB) to fully utilize gpu memory. Current kv cache memory in use is 54.84 GiB.
+(EngineCore pid=12388) INFO 10-29 10:16:31 [core.py:412] init engine (profile, create kv cache, warmup model) took 59.73 s (compilation: 41.09 s)
+(APIServer pid=12301) INFO 10-29 10:16:33 [entry.py:135] Supported tasks: ('generate',)
+(APIServer pid=12301) INFO 10-29 10:16:33 [entry.py:139] Starting vLLM server on http://0.0.0.0:8000
+(APIServer pid=12301) INFO 10-29 10:16:33 [launcher.py:188] Available routes are:
+(APIServer pid=12301) INFO 10-29 10:16:33 [launcher.py:197] Route: /health, Methods: GET
+(APIServer pid=12301) INFO 10-29 10:16:33 [launcher.py:197] Route: /v1/models, Methods: GET
+(APIServer pid=12301) INFO 10-29 10:16:33 [launcher.py:197] Route: /v1/chat/completions, Methods: POST
+(APIServer pid=12301) INFO 10-29 10:16:33 [launcher.py:197] Route: /v1/completions, Methods: POST
+(APIServer pid=12301) INFO:     Started server process [12301]
+(APIServer pid=12301) INFO:     Waiting for application startup.
+(APIServer pid=12301) INFO:     Application startup complete.

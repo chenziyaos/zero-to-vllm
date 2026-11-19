@@ -1,0 +1,5 @@
+[
+    {"_benchmark_name": "chat",  "random_input_len": 1500, "random_output_len": 300},
+    {"_benchmark_name": "rag",   "random_input_len": 8000, "random_output_len": 200},
+    {"_benchmark_name": "gen",   "random_input_len": 300,  "random_output_len": 1500}
+]
