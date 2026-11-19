@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1240"
+     height="744"
+     viewBox="-20 -20 1240 744">
+<g id="o3:1" transform="translate(0, 0)"><rect x="0" y="0" width="1200" height="704" fill="#fafbfd" stroke="#dee0e3" stroke-width="1" rx="16" ry="16"/></g>
+<g id="a3:1" transform="translate(40, 25.058)"><text font-size="28" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="32.942"><tspan x="0" text-anchor="start">V4：五类缓存、三种页大小，压缩器状态借用 SWA 的语义</tspan></tspan></text></g>
+<g id="a3:2" transform="translate(40, 75.529)"><text font-size="14" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="16.471"><tspan x="0" text-anchor="start">一个逻辑块 = 256 个原生位置。c4a 每 4 个位置一条，块里 64 条；c128a 每 128 个一条，块里 2 条</tspan></tspan></text></g>
+<g id="a3:3" transform="translate(40, 665.882)"><text font-size="12" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="14.118"><tspan x="0" text-anchor="start">来源：vLLM 博客 2026-04-24 “DeepSeek V4 in vLLM”；sparse_swa.py 75（DeepseekV4SWACache），deepseek_v41/attention.py 522–579（0d6f92a）</tspan></tspan></text></g>
+<g id="a3:4" transform="translate(40, 134.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">256 个原生位置</tspan></tspan></text></g>
+<g id="o3:2" transform="translate(60, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:3" transform="translate(76.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:4" transform="translate(93.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:5" transform="translate(110.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:6" transform="translate(127.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:7" transform="translate(144.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:8" transform="translate(161.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:9" transform="translate(178.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:10" transform="translate(195, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:11" transform="translate(211.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:12" transform="translate(228.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:13" transform="translate(245.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:14" transform="translate(262.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:15" transform="translate(279.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:16" transform="translate(296.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:17" transform="translate(313.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:18" transform="translate(330, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:19" transform="translate(346.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:20" transform="translate(363.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:21" transform="translate(380.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:22" transform="translate(397.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:23" transform="translate(414.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:24" transform="translate(431.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:25" transform="translate(448.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:26" transform="translate(465, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:27" transform="translate(481.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:28" transform="translate(498.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:29" transform="translate(515.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:30" transform="translate(532.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:31" transform="translate(549.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:32" transform="translate(566.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:33" transform="translate(583.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:34" transform="translate(600, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:35" transform="translate(616.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:36" transform="translate(633.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:37" transform="translate(650.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:38" transform="translate(667.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:39" transform="translate(684.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:40" transform="translate(701.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:41" transform="translate(718.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:42" transform="translate(735, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:43" transform="translate(751.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:44" transform="translate(768.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:45" transform="translate(785.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:46" transform="translate(802.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:47" transform="translate(819.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:48" transform="translate(836.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:49" transform="translate(853.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:50" transform="translate(870, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:51" transform="translate(886.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:52" transform="translate(903.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:53" transform="translate(920.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:54" transform="translate(937.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:55" transform="translate(954.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:56" transform="translate(971.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:57" transform="translate(988.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:58" transform="translate(1005, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:59" transform="translate(1021.875, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:60" transform="translate(1038.75, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:61" transform="translate(1055.625, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:62" transform="translate(1072.5, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:63" transform="translate(1089.375, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:64" transform="translate(1106.25, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:65" transform="translate(1123.125, 162)"><rect x="0" y="0" width="14.875" height="18" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="2" ry="2"/></g>
+<g id="a3:5" transform="translate(40, 194.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#245bdb" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">c4a 64 条（8 个位置加权、步长 4）</tspan></tspan></text></g>
+<g id="o3:66" transform="translate(60, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:67" transform="translate(76.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:68" transform="translate(93.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:69" transform="translate(110.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:70" transform="translate(127.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:71" transform="translate(144.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:72" transform="translate(161.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:73" transform="translate(178.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:74" transform="translate(195, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:75" transform="translate(211.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:76" transform="translate(228.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:77" transform="translate(245.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:78" transform="translate(262.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:79" transform="translate(279.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:80" transform="translate(296.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:81" transform="translate(313.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:82" transform="translate(330, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:83" transform="translate(346.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:84" transform="translate(363.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:85" transform="translate(380.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:86" transform="translate(397.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:87" transform="translate(414.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:88" transform="translate(431.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:89" transform="translate(448.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:90" transform="translate(465, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:91" transform="translate(481.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:92" transform="translate(498.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:93" transform="translate(515.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:94" transform="translate(532.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:95" transform="translate(549.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:96" transform="translate(566.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:97" transform="translate(583.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:98" transform="translate(600, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:99" transform="translate(616.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:100" transform="translate(633.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:101" transform="translate(650.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:102" transform="translate(667.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:103" transform="translate(684.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:104" transform="translate(701.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:105" transform="translate(718.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:106" transform="translate(735, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:107" transform="translate(751.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:108" transform="translate(768.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:109" transform="translate(785.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:110" transform="translate(802.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:111" transform="translate(819.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:112" transform="translate(836.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:113" transform="translate(853.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:114" transform="translate(870, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:115" transform="translate(886.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:116" transform="translate(903.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:117" transform="translate(920.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:118" transform="translate(937.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:119" transform="translate(954.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:120" transform="translate(971.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:121" transform="translate(988.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:122" transform="translate(1005, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:123" transform="translate(1021.875, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:124" transform="translate(1038.75, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:125" transform="translate(1055.625, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:126" transform="translate(1072.5, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:127" transform="translate(1089.375, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:128" transform="translate(1106.25, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:129" transform="translate(1123.125, 222)"><rect x="0" y="0" width="14.875" height="18" fill="#3370ff" stroke="#3370ff" stroke-width="1" rx="2" ry="2"/></g>
+<g id="a3:6" transform="translate(40, 254.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#d46b08" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">c128a 2 条（128 个位置、步长 128）</tspan></tspan></text></g>
+<g id="o3:130" transform="translate(60, 282)"><rect x="0" y="0" width="536" height="18" fill="#ff8800" stroke="#ff8800" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:131" transform="translate(600, 282)"><rect x="0" y="0" width="536" height="18" fill="#ff8800" stroke="#ff8800" stroke-width="1" rx="2" ry="2"/></g>
+<g id="a3:7" transform="translate(40, 314.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#2ea121" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">SWA：最近 128 个原生位置，不压缩</tspan></tspan></text></g>
+<g id="o3:132" transform="translate(600, 342)"><rect x="0" y="0" width="536" height="18" fill="#34c724" stroke="#34c724" stroke-width="1" rx="2" ry="2"/></g>
+<g id="o3:133" transform="translate(40, 390)"><rect x="0" y="0" width="360" height="150" fill="#e1eaff" stroke="#82a7fc" stroke-width="1" rx="12" ry="12"/></g>
+<g id="a3:8" transform="translate(56, 401.176)"><text font-size="16" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="18.824"><tspan x="0" text-anchor="start">大页</tspan></tspan></text></g>
+<g id="a3:9" transform="translate(56, 432.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">c4a 主 KV</tspan></tspan></text></g>
+<g id="a3:10" transform="translate(56, 454.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">SWA KV</tspan></tspan></text></g>
+<g id="a3:11" transform="translate(56, 476.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">C4 压缩器状态</tspan></tspan></text></g>
+<g id="a3:12" transform="translate(56, 498.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">C128 压缩器状态</tspan></tspan></text></g>
+<g id="o3:134" transform="translate(420, 390)"><rect x="0" y="0" width="360" height="150" fill="#e4fae1" stroke="#8ee085" stroke-width="1" rx="12" ry="12"/></g>
+<g id="a3:13" transform="translate(436, 401.176)"><text font-size="16" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="18.824"><tspan x="0" text-anchor="start">中页</tspan></tspan></text></g>
+<g id="a3:14" transform="translate(436, 432.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">C4 indexer KV</tspan></tspan></text></g>
+<g id="a3:15" transform="translate(436, 454.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">C4 indexer 的压缩器状态</tspan></tspan></text></g>
+<g id="a3:16" transform="translate(436, 476.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">top-k 512 从这里选</tspan></tspan></text></g>
+<g id="o3:135" transform="translate(800, 390)"><rect x="0" y="0" width="360" height="150" fill="#fff1e0" stroke="#ffba6b" stroke-width="1" rx="12" ry="12"/></g>
+<g id="a3:17" transform="translate(816, 401.176)"><text font-size="16" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="18.824"><tspan x="0" text-anchor="start">小页</tspan></tspan></text></g>
+<g id="a3:18" transform="translate(816, 432.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">c128a 主 KV</tspan></tspan></text></g>
+<g id="a3:19" transform="translate(816, 454.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">k = 8192（V3.2 是 2048）</tspan></tspan></text></g>
+<g id="a3:20" transform="translate(816, 476.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">一个块只有 2 条</tspan></tspan></text></g>
+<g id="o3:136" transform="translate(40, 560)"><rect x="0" y="0" width="1120" height="90" fill="#f5f6f7" stroke="#dee0e3" stroke-width="1" rx="12" ry="12"/></g>
+<g id="a3:21" transform="translate(56, 571.176)"><text font-size="16" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="bold" fill="#1f2329" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="18.824"><tspan x="0" text-anchor="start">关键做法</tspan></tspan></text></g>
+<g id="a3:22" transform="translate(56, 602.7055)"><text font-size="13" font-family="Noto Sans SC, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif" font-weight="normal" fill="#646a73" text-anchor="start" dominant-baseline="alphabetic" x="0"><tspan x="0" y="15.295"><tspan x="0" text-anchor="start">压缩器状态注册成 sliding_window = coff × ratio（C4 为 8，C128 为 128）的 SWA KV，前缀缓存和 PD 直接复用 SWA 的逻辑</tspan></tspan></text></g>
+</svg>
