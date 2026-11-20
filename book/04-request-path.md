@@ -508,4 +508,4 @@ curl -s localhost:8000/metrics | grep -E "^vllm:(time_to_first_token|request_que
 
 ---
 
-上一章：[VLLM-03｜上手｜指标与压测：vllm bench serve、TTFT、TPOT 与 goodput](./03-bench.md) · [目录](./README.md) · 下一章：[VLLM-05｜原理｜调度器：token 预算、num_computed_tokens 与抢占](./05-scheduler.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/04-request-path.ipynb) · 上一章：[VLLM-03｜上手｜指标与压测：vllm bench serve、TTFT、TPOT 与 goodput](./03-bench.md) · [目录](./README.md) · 下一章：[VLLM-05｜原理｜调度器：token 预算、num_computed_tokens 与抢占](./05-scheduler.md)

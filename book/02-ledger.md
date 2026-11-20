@@ -28,13 +28,30 @@ python3 sim_ledger.py --model qwen3.5-35b-a3b --gpu h100-sxm --tp 2
 5. **decode 是带宽题。**Qwen3-8B 在 H100 上做 decode，算术强度从 bs=1 的 1 FLOP/Byte 爬到 bs=1024 的 51，离拐点 295 还差六倍。上下文 2K 时吞吐上限约 10,500 tok/s，bs 过了 128 以后吞吐只涨 35%，每步耗时却涨 6 倍。batch 大小要按 TPOT 预算定，越大并不越好[[3]](https://dl.acm.org/doi/10.1145/1498765.1498785)[[4]](https://arxiv.org/abs/2402.16363)。
 6. **改 KV 容量有六个旋钮，作用在账本的不同行。**util、max_num_batched_tokens、图估计开关作用在减数上。`--kv-cache-memory-bytes` 和 `--num-gpu-blocks-override` 直接跳过测量。`--max-model-len auto` 反过来让上下文去迁就容量。固定机型的集群还可以打开 startup plan，把这次量好的账存下来，下次同配置启动直接复用。
 
+## 开场实验：KV cache 开和关
+
+后面七章大半在算 KV 占多少显存、decode 能跑多快，先用一个小实验看清楚它省的是什么。[02-ledger](../02-ledger) 的 `kv_cache_timing.py` 用 numpy 写了一个 4 层的小 decoder（d=128，4 个头，d_ff=512，vocab=512，float64 随机权重），同一个 prompt 用两种做法各 greedy 生成 96 个 token：不带 cache 时，每生成一个 token 都把整段序列重新过一遍模型；带 cache 时只算新 token 一行，K、V 从缓存里取。两种做法生成的 token 必须完全相同，脚本会检查。
+
+![不带 KV cache，运算量涨 55.6 倍，时间只涨 6.5 倍](assets/02-ledger/fig-01.svg)
+
+```bash
+python3 kv_cache_timing.py
+python3 kv_cache_timing.py --prompt 128 --gen 256
+python3 kv_cache_timing.py --params-b 0.6 --layers 28 --d-model 1024 --prompt 512 --gen 256
+python3 test_kv_cache_timing.py
+```
+
+在 Apple M4 Pro 上，prompt 32 个 token、每种做法跑 3 遍取最短：带 cache 用时 0.018 秒、0.23 GFLOP，每 token 0.18 毫秒；不带 cache 用时 0.114 秒、12.72 GFLOP，每 token 1.19 毫秒。运算量差 55.6 倍，时间只差 6.5 倍左右，本机多次运行在 6.5 到 6.9 倍之间。时间差得少，是因为带 cache 的每一步只算一行，矩阵太小，时间主要花在 Python 和 numpy 的调用开销上；把 prompt 和生成长度调大，两种做法的时间差会随之拉大。
+
+第三条命令换成 Qwen3-0.6B 的尺寸只算账（28 层，d=1024，prompt 512，生成 256）：带 cache 0.95 TFLOP，不带 cache 202.55 TFLOP，差 212.3 倍。真实部署里没有人关掉 KV cache。这个实验说明的是另一件事：从「每步只算一个 token」开始，decode 的运算量小到喂不饱 GPU，瓶颈转到读权重和读 KV 的带宽上，第 5 章的 Roofline 就建立在这个前提上；而带宽的代价是显存，第 1 到 3 章算的就是这笔账。
+
 # 第 1 章 · 问题：54.84 GiB 是怎么来的
 
 VLLM-01 的示意日志里有两个对账用的数：54.84 GiB 和 399,312 token。上线前总有人问：能不能再多塞一点？换 H200 能多多少？开 TP=2 呢？要回答这些问题，得先知道这两个数是怎么算出来的。vLLM 不让你直接配置 KV 大小（除非你明确绕过测量，见第 6 章），它给你一个总预算，然后把能量到的非 KV 开销一项项扣掉，余下的全部给 KV。
 
 这本账里，权重、非 torch 显存和峰值激活是启动时量出来的，CUDA Graph 那一项走临时池估计，只有最大的两张真捕获、其余按边际成本外推，没有一项靠查表取经验常数。这是 vLLM 和 SGLang 在显存管理上最根本的区别，也是为什么同一个 util 在不同模型、不同 batch 配置下会得到差别很大的 KV 容量。先看减数分几类、各用什么方法量。
 
-![非 KV 显存分三类，vLLM 用三种不同的方法量它们](assets/02-ledger/fig-01.svg)
+![非 KV 显存分三类，vLLM 用三种不同的方法量它们](assets/02-ledger/fig-02.svg)
 
 ## 1.1 三类非 KV 显存
 
@@ -56,7 +73,7 @@ VLLM-01 的示意日志里有两个对账用的数：54.84 GiB 和 399,312 token
 
 `determine_available_memory` 的执行顺序决定了每个数是在什么状态下量出来的。下图把一次启动拆成七段，标出四次显存快照的位置。橙色是只为测量而存在、量完即丢的分配；蓝色是会留在卡上的。
 
-![一次启动拍四张显存快照：KV 在第三张之后才分配，建议值在最后一张之后才算](assets/02-ledger/fig-02.svg)
+![一次启动拍四张显存快照：KV 在第三张之后才分配，建议值在最后一张之后才算](assets/02-ledger/fig-03.svg)
 
 顺序里有两个容易被忽略的细节。第一，profile_run 和图估计都发生在 KV 分配**之前**，这时卡上几乎是空的，量出来的峰值不会和 KV 打架。第二，CUDA Graph 的实际捕获发生在 KV 分配**之后**，所以估计值必须提前从 KV 里扣出来；如果不扣，KV 吃满 requested，捕获时就只能从 requested 之外的那 8% 里拿显存。v0.21.0 之前的版本就是这样做的，这也是为什么老版本在 util 调到 0.95 以上时经常在捕获阶段 OOM[[5]](https://docs.vllm.ai/en/latest/design/cuda_graphs/)。
 
@@ -86,7 +103,7 @@ weights memory: 15.27GiB.
 
 ## 2.4 第三步：CUDA Graph 估计
 
-![51 个捕获尺寸只真捕获 2 张 FULL 图：其余 49 张按第二张外推](assets/02-ledger/fig-03.svg)
+![51 个捕获尺寸只真捕获 2 张 FULL 图：其余 49 张按第二张外推](assets/02-ledger/fig-04.svg)
 
 捕获尺寸来自 `_set_cudagraph_sizes`（[vllm.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/config/vllm.py)）：上限是 min(max_num_seqs × 每请求 decode token 数 × 2, 512)，Blackwell 上是 1024；网格是 1、2、4，然后 8 到 248 步长 8，256 到 512 步长 16，共 51 个，和日志里的 `51/51` 对上。PIECEWISE 和 FULL 两种模式各捕获一遍，所以日志里有两条进度条。
 
@@ -98,7 +115,7 @@ weights memory: 15.27GiB.
 
 ## 2.5 减法和日志末尾的两个建议值
 
-![从 72.87 减到 54.84：每一级都能在日志里找到原数](assets/02-ledger/fig-04.svg)
+![从 72.87 减到 54.84：每一级都能在日志里找到原数](assets/02-ledger/fig-05.svg)
 
 三项减完：72.87 − 17.32 − 0.71 = 54.84 GiB，精确到字节是 58,882,048,000 B。日志在捕获完真实图之后还会打印一行很长的建议：
 
@@ -124,7 +141,7 @@ to fully utilize gpu. Current kv cache memory in use is 58882048000 bytes.
 
 容量账的第二半是除法，除数是每个 token 的 KV 字节数。标准注意力的公式是 2 × num_kv_heads × head_dim × dtype_bytes × num_layers，前面的 2 是 K 和 V。vLLM 里对应 `AttentionSpec` 的 `page_size_bytes`：一页 block_size 个 token，每格存 (head_size + head_size_v) × dtype 字节（[kv_cache_interface.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/kv_cache_interface.py)）。不同的注意力结构，这个数可以差 40 倍以上：
 
-![1 个 token 在 1 层里占多少：MHA 16 KiB，GQA 4 KiB，MLA 只要 1,152 B](assets/02-ledger/fig-05.svg)
+![1 个 token 在 1 层里占多少：MHA 16 KiB，GQA 4 KiB，MLA 只要 1,152 B](assets/02-ledger/fig-06.svg)
 
 Qwen3-8B 是 32 个 query 头、8 个 KV 头的 GQA[[8]](https://arxiv.org/abs/2305.13245)[[9]](https://huggingface.co/Qwen/Qwen3-8B)：每层每 token 2 × 8 × 128 × 2 = 4,096 B，36 层合计 147,456 B = 144 KiB。如果它用的是 MHA，同样的 54.84 GiB 只能装下四分之一的 token；这正是 GQA 和更早的 MQA 被提出的动机[[10]](https://arxiv.org/abs/1911.02150)。
 
@@ -132,7 +149,7 @@ DeepSeek 的 MLA 走得更远：不存 K 和 V，只存一个 512 维的压缩 l
 
 ## 3.2 块、token 和 null block
 
-![日志里的 399,312 token 包含一块永远不分配的 null block，调度器能用的是 399,296](assets/02-ledger/fig-06.svg)
+![日志里的 399,312 token 包含一块永远不分配的 null block，调度器能用的是 399,296](assets/02-ledger/fig-07.svg)
 
 vLLM 按块分配 KV，默认 block_size = 16。一块 = 16 × 147,456 = 2,359,296 B（2.25 MiB），这是 36 层合在一起的大小；实际存储时每层各有一个张量，块号在各层之间共享[[14]](https://arxiv.org/abs/2309.06180)[[15]](https://docs.vllm.ai/en/latest/design/paged_attention/)。58,882,048,000 B 整除 2,359,296 得 24,957 块。
 
@@ -155,7 +172,7 @@ MLA 更特殊：latent 不分头，每张 TP 卡都存一份完整副本，TP �
 
 # 第 4 章 · 对照：SGLang 先估后分
 
-![同一张 H100：vLLM 实测得 54.84 GiB KV，SGLang 按公式预留得约 50 GiB](assets/02-ledger/fig-07.svg)
+![同一张 H100：vLLM 实测得 54.84 GiB KV，SGLang 按公式预留得约 50 GiB](assets/02-ledger/fig-08.svg)
 
 ## 4.1 SGLang 的公式
 
@@ -197,7 +214,7 @@ t_min(bs) = bytes / 3.35 TB/s                  （H100 SXM HBM3）
 
 H100 SXM 的 BF16 稠密算力是 989 TFLOPS，带宽 3.35 TB/s，拐点在 989 / 3.35 ≈ 295 FLOP/Byte[[20]](https://www.nvidia.com/en-us/data-center/h100/)。算术强度低于 295 就是带宽受限，每步耗时由字节数决定，和算力无关。
 
-![decode 的算术强度从 1 爬到 51，离 H100 拐点 295 还差六倍，batch 再大也受带宽限制](assets/02-ledger/fig-08.svg)
+![decode 的算术强度从 1 爬到 51，离 H100 拐点 295 还差六倍，batch 再大也受带宽限制](assets/02-ledger/fig-09.svg)
 
 | bs | 每步下限 (ms) | tok/s 上限 | 算术强度 | KV 占流量 |
 |-|-|-|-|-|
@@ -223,7 +240,7 @@ attention 自己的算术强度更低。GQA 下每读 1 字节 KV，要给共享
 
 ## 6.1 TP 从 1 到 16
 
-![TP 从 1 到 8，单卡 KV token 数涨 10 倍；到 16 时 KV 头不够切，收益归零](assets/02-ledger/fig-09.svg)
+![TP 从 1 到 8，单卡 KV token 数涨 10 倍；到 16 时 KV 头不够切，收益归零](assets/02-ledger/fig-10.svg)
 
 TP 对 KV 容量有双重红利：权重按卡摊薄，给 KV 池让出空间；每 token KV 字节数也按卡摊薄。从 TP=1 到 TP=8，单卡 KV 只从 54.85 GiB 涨到 69.45 GiB（+27%），可装 token 却从 39.9 万涨到 404.6 万，涨了 10 倍。到 TP=16，KV 头不够切，每 token 字节数停在 18 KiB，收益基本归零。
 
@@ -231,7 +248,7 @@ TP 对 KV 容量有双重红利：权重按卡摊薄，给 KV 池让出空间；
 
 ## 6.2 六个旋钮
 
-![想改 KV 容量，有六个旋钮可拧：拧哪一个，取决于你想绕开减法的哪一级](assets/02-ledger/fig-10.svg)
+![想改 KV 容量，有六个旋钮可拧：拧哪一个，取决于你想绕开减法的哪一级](assets/02-ledger/fig-11.svg)
 
 | 旋钮 | 作用在账本哪一行 | 效果（示意日志基线） | 注意 |
 |-|-|-|-|
@@ -359,4 +376,4 @@ python3 sim_ledger.py --model qwen3-8b --total-gib 79.2 --act-gib 1.43 --nontorc
 
 ---
 
-上一章：[VLLM-01｜上手｜第一个服务：安装、vllm serve 与读懂启动日志](./01-first-server.md) · [目录](./README.md) · 下一章：[VLLM-03｜上手｜指标与压测：vllm bench serve、TTFT、TPOT 与 goodput](./03-bench.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/02-ledger.ipynb) · 上一章：[VLLM-01｜上手｜第一个服务：安装、vllm serve 与读懂启动日志](./01-first-server.md) · [目录](./README.md) · 下一章：[VLLM-03｜上手｜指标与压测：vllm bench serve、TTFT、TPOT 与 goodput](./03-bench.md)

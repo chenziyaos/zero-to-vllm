@@ -594,4 +594,4 @@ config/kv_transfer.py 64–111 → kv_connector/factory.py 126–130 → envs.py
 
 ---
 
-上一章：[VLLM-14｜规模｜KV 卸载与连接器：CPU 卸载、LMCache 与 Mooncake](./14-kv-offload.md) · [目录](./README.md) · 下一章：[VLLM-16｜规模｜结构化输出与多 LoRA](./16-structured-lora.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/15-pd-disagg.ipynb) · 上一章：[VLLM-14｜规模｜KV 卸载与连接器：CPU 卸载、LMCache 与 Mooncake](./14-kv-offload.md) · [目录](./README.md) · 下一章：[VLLM-16｜规模｜结构化输出与多 LoRA](./16-structured-lora.md)

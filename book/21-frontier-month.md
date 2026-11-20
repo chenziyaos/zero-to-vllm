@@ -799,4 +799,4 @@ vllm serve <model> --speculative-config '{"method":"medusa",...}'   # Speculativ
 
 ---
 
-上一章：[VLLM-20｜生产｜读源码与提 PR：插件系统、测试与基准](./20-contrib.md) · [目录](./README.md) · 下一章：[VLLM-22｜前沿｜DeepSeek 开源如何改写 vLLM：从 MLA、Wide-EP 到 DeepInfer 同源](./22-deepseek-impact.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/21-frontier-month.ipynb) · 上一章：[VLLM-20｜生产｜读源码与提 PR：插件系统、测试与基准](./20-contrib.md) · [目录](./README.md) · 下一章：[VLLM-22｜前沿｜DeepSeek 开源如何改写 vLLM：从 MLA、Wide-EP 到 DeepInfer 同源](./22-deepseek-impact.md)

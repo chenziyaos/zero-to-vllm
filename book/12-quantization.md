@@ -603,6 +603,8 @@ config/model.py 1390、1437 → model_executor/layers/quantization/\_\_init\_\_.
 
 量化把每一步的成本压了下来，但 decode 仍然是一个 token 一个 token地生成，每步都要把权重完整读一遍。下一篇 VLLM-13 换一个角度：一步多出几个 token。EAGLE、MTP、n-gram 这些提议器怎么接进 vLLM 的调度，拒绝采样怎么保证输出分布不变，接受率和 batch 大小怎么决定投机解码是加速还是减速。
 
+**延伸阅读**：Maarten Grootendorst 的 [A Visual Guide to Quantization](https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-quantization)（2024 年 7 月）用示意图讲对称和非对称量化、离群值裁剪、GPTQ、GGUF 的分块量化和 BitNet，适合在读本篇的账本之前先建立直觉。它不讲推理引擎里的 kernel 选择和 KV cache 量化，这两块以本篇为准。
+
 # 参考文献
 
 按正文首次引用顺序编号，资料截至 2026 年 10 月底。源码以 vllm-project/vllm 主干提交 0d6f92a（2026 年 10 月 29 日）和 v0.32.0 发行版为准；SGLang 对照以 sgl-project/sglang 主干 8fabf5e 为准。
@@ -653,4 +655,4 @@ config/model.py 1390、1437 → model_executor/layers/quantization/\_\_init\_\_.
 
 ---
 
-上一章：[VLLM-11｜规模｜并行：TP、PP、DP、EP 与 EPLB、DCP](./11-parallelism.md) · [目录](./README.md) · 下一章：[VLLM-13｜规模｜投机解码：EAGLE、MTP、n-gram 与拒绝采样](./13-speculative.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/12-quantization.ipynb) · 上一章：[VLLM-11｜规模｜并行：TP、PP、DP、EP 与 EPLB、DCP](./11-parallelism.md) · [目录](./README.md) · 下一章：[VLLM-13｜规模｜投机解码：EAGLE、MTP、n-gram 与拒绝采样](./13-speculative.md)

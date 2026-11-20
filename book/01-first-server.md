@@ -368,4 +368,4 @@ vLLM 把推理段放在 `message.reasoning`（流式时是 `delta.reasoning`）�
 
 ---
 
-[目录](./README.md) · 下一章：[VLLM-02｜上手｜推理账本：gpu_memory_utilization、KV 容量与 Roofline](./02-ledger.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/01-first-server.ipynb) · [目录](./README.md) · 下一章：[VLLM-02｜上手｜推理账本：gpu_memory_utilization、KV 容量与 Roofline](./02-ledger.md)

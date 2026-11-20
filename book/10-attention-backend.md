@@ -513,4 +513,4 @@ v1/attention/backend.py 59、127、160、284、395、570、605、699、903 → v
 
 ---
 
-上一章：[VLLM-09｜原理｜Model Runner、torch.compile 与 CUDA Graph](./09-model-runner.md) · [目录](./README.md) · 下一章：[VLLM-11｜规模｜并行：TP、PP、DP、EP 与 EPLB、DCP](./11-parallelism.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/10-attention-backend.ipynb) · 上一章：[VLLM-09｜原理｜Model Runner、torch.compile 与 CUDA Graph](./09-model-runner.md) · [目录](./README.md) · 下一章：[VLLM-11｜规模｜并行：TP、PP、DP、EP 与 EPLB、DCP](./11-parallelism.md)
