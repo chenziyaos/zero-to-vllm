@@ -497,4 +497,4 @@ OUT=results/dense/workload-01 bash sweep.sh plot workload
 
 ---
 
-上一章：[VLLM-16｜规模｜结构化输出与多 LoRA](./16-structured-lora.md) · [目录](./README.md) · 下一章：[VLLM-18｜生产｜可观测与 profiling：指标口径、torch profiler 与 nsys](./18-observability.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/17-tuning.ipynb) · 上一章：[VLLM-16｜规模｜结构化输出与多 LoRA](./16-structured-lora.md) · [目录](./README.md) · 下一章：[VLLM-18｜生产｜可观测与 profiling：指标口径、torch profiler 与 nsys](./18-observability.md)

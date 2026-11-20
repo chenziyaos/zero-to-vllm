@@ -1,5 +1,7 @@
 # VLLM-13 投机解码：EAGLE、MTP、n-gram 与拒绝采样
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/13-speculative.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：两个模拟器只需要 CPU 和 Python 3 标准库。`serve_spec.sh` 需要一张 H100 和装好的 vLLM；跑 SuffixDecoding 要另装 `arctic-inference`，跑 SGLang 对照要另装 sglang。源码基线：vllm 主干 0d6f92a，sglang 主干 8fabf5e。
 
 | 文件 | 内容 |

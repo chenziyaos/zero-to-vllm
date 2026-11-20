@@ -1,13 +1,48 @@
 # VLLM-02 推理账本
 
-运行环境：只需要 CPU 上的 Python 3.10+，不依赖 torch 或 vllm。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/02-ledger.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
+运行环境：只需要 CPU 上的 Python 3.10+，不依赖 torch 或 vllm；`kv_cache_timing.py` 额外需要 numpy。
 
 对应文档：VLLM-02｜上手｜推理账本：gpu_memory_utilization、KV 容量与 Roofline
 
 | 文件 | 做什么 | 对照的源码（vllm 主干 0d6f92a） |
 |---|---|---|
 | `sim_profile_run.py` | 按 `determine_available_memory` 的顺序复算一次启动，依次是 requested、memory_profiling、CUDA Graph 估计、KV 可用、块数 / token / 并发、util 提示行、`--kv-cache-memory` 建议值。加 `--sglang` 会追加 SGLang 默认 `mem_fraction_static` 的推导 | `v1/worker/utils.py`、`utils/mem_utils.py`、`v1/worker/gpu_worker.py`、`v1/worker/gpu/cudagraph_utils.py`、`config/vllm.py`、`v1/core/kv_cache_planning.py`、`v1/core/kv_cache_utils.py` |
+| `kv_cache_timing.py` | 开场实验：随机权重的小模型带 / 不带 KV cache 各生成一遍，比时间和运算量，并核对两边 token 相同 | 无，教学模型 |
 | `sim_ledger.py` | 事前估算：不看日志，只看模型结构和 GPU 规格。输出权重、激活、KV 池、可分配块数（已扣 null block）、日志口径的 token 数，以及按 HBM 带宽算的 decode 下限 | 同上，外加 `common/specs.py` |
+
+## 0. 开场实验：KV cache 开和关
+
+```bash
+python3 kv_cache_timing.py                       # 随机权重的小模型，带 / 不带 KV cache 各生成一遍
+python3 kv_cache_timing.py --prompt 128 --gen 256
+python3 kv_cache_timing.py --params-b 0.6 --layers 28 --d-model 1024 --prompt 512 --gen 256   # 只算账：Qwen3-0.6B 尺寸
+python3 test_kv_cache_timing.py
+```
+
+不带 cache 时，每生成一个 token 都要把整段序列重新过一遍模型；带 cache 时只算新 token 一行，K、V 从缓存里取。两种做法用同一份 float64 权重做 greedy 解码，生成的 token 必须完全相同，脚本会检查。下面的输出在 Apple M4 Pro 上测得，时间随机器变，运算量和 token 一致性不随机器变：
+
+```
+模型：4 层，d=128，4 头，d_ff=512，vocab=512，float64，随机权重
+prompt 32 个 token，greedy 生成 96 个，每种做法跑 3 遍取最短
+               时间 (s)     GFLOP   每 token (ms)
+带 cache         0.018      0.23            0.18
+不带 cache       0.114     12.72            1.19
+不带 / 带：时间 6.5x，运算量 55.6x
+两种做法生成的 token 完全相同
+```
+
+运算量差 55.6 倍，时间只差 6.5 倍左右（本机多次运行在 6.5 到 6.9 倍之间）。原因是带 cache 的每一步只算一行，矩阵很小，时间主要花在 Python 和 numpy 的调用开销上，算力吃不满；把 prompt 和生成长度调大，两种做法的时间差会随之拉大。换成真实模型尺寸只算账：
+
+```
+模型 0.6B，28 层，d=1024，prompt 512，生成 256
+  带 cache         0.95 TFLOP
+  不带 cache     202.55 TFLOP
+  不带 / 带 = 212.3x（只算运算量；带 cache 的 decode 实际受带宽限制，见本章账本）
+```
+
+真实部署里没有人关掉 KV cache。这个实验只是说明：从「每步只算一个 token」开始，decode 的瓶颈就从算力转到了读权重和读 KV 的带宽上，本章后面的账本都建立在这个前提上。
 
 ## 1. 逐行复算示意日志
 

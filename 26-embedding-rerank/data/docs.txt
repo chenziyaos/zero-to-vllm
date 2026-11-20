@@ -1,0 +1,12 @@
+gpu_memory_utilization 决定 vLLM 启动时预留多少显存给权重、激活和 KV cache，调低它可以给同卡上的其他进程腾地方。
+KV cache 不够时，调度器会抢占正在运行的请求，被抢占的请求要么换出到 CPU，要么之后重新计算。
+把权重量化到 FP8 可以让权重少占一半显存，省下来的部分都会变成 KV cache 的容量。
+张量并行把每一层的矩阵按列或按行切到多张卡上，每层结束时需要一次 all-reduce。
+prefix caching 让共享同一段系统提示的请求复用已经算好的 KV 块，命中时首 token 延迟明显下降。
+chunked prefill 把长 prompt 切成小块，和 decode 请求混在同一步里跑，避免一个长请求把整步占满。
+投机解码先用小模型或 n-gram 猜几个 token，再让大模型一次验证，猜对的部分相当于白赚。
+embedding 模型只有 prefill，没有 decode，所以 TPOT 和 ITL 这些指标对它没有意义。
+cross-encoder 把 query 和文档拼在一起过一遍模型，比向量相似度准，但每个候选都要单独算一次。
+向量库存 1000 万个 1024 维 fp32 向量大约要 41 GB，截到 256 维只要四分之一。
+CUDA Graph 把一串 kernel 录下来整体重放，省掉每步的 launch 开销，代价是要为每个 batch 尺寸单独录一份。
+多 LoRA 服务时，max_lora_rank 和 max_loras 越大，预留给 adapter 的显存越多，KV cache 就越少。

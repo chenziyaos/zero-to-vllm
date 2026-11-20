@@ -617,4 +617,4 @@ decode 的口径和 yhfgyyf、#46310 对齐（8K 输入、随机数据、ignore-
 
 ---
 
-上一章：[VLLM-22｜前沿｜DeepSeek 开源如何改写 vLLM：从 MLA、Wide-EP 到 DeepInfer 同源](./22-deepseek-impact.md) · [目录](./README.md) · 下一章：[VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/23-deepseek-v41-deploy.ipynb) · 上一章：[VLLM-22｜前沿｜DeepSeek 开源如何改写 vLLM：从 MLA、Wide-EP 到 DeepInfer 同源](./22-deepseek-impact.md) · [目录](./README.md) · 下一章：[VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md)

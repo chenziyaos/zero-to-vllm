@@ -485,4 +485,4 @@ config/compilation.py 37、53（两个枚举）→ 1376（resolve）→ config/v
 
 ---
 
-上一章：[VLLM-08｜原理｜前缀缓存与混合 KV 管理：块哈希、驱逐与 Jenga](./08-prefix-caching.md) · [目录](./README.md) · 下一章：[VLLM-10｜原理｜注意力后端：FlashAttention、FlashInfer、Triton 与 MLA](./10-attention-backend.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/09-model-runner.ipynb) · 上一章：[VLLM-08｜原理｜前缀缓存与混合 KV 管理：块哈希、驱逐与 Jenga](./08-prefix-caching.md) · [目录](./README.md) · 下一章：[VLLM-10｜原理｜注意力后端：FlashAttention、FlashInfer、Triton 与 MLA](./10-attention-backend.md)

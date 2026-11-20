@@ -1,8 +1,8 @@
 # VLLM-00｜索引｜从 0 开始 vLLM：路线、章节与练习
 
-> 本目录是「从 0 开始 vLLM」系列文档的 Markdown 版，共 25 章，由飞书原文转换，正文与原文一致，画板导出为图片放在 `assets/`。配套代码在仓库根目录，每章一个目录。
+> 本目录是「从 0 开始 vLLM」系列文档的 Markdown 版，共 26 章，由飞书原文转换，正文与原文一致，画板导出为图片放在 `assets/`。配套代码在仓库根目录，每章一个目录。
 
-> 🎯 **这篇文档解决什么问题**：想把 vLLM 从“能 serve 起来”学到“能读懂、能改调度和 KV 管理、能扛线上流量”，应该按什么顺序读，每一章读完能交付什么，练习代码放在哪。这一页是 25 章的入口和路线图，我们先把路线摆出来，再一章章往下走。
+> 🎯 **这篇文档解决什么问题**：想把 vLLM 从“能 serve 起来”学到“能读懂、能改调度和 KV 管理、能扛线上流量”，应该按什么顺序读，每一章读完能交付什么，练习代码放在哪。这一页是 26 章的入口和路线图，我们先把路线摆出来，再一章章往下走。
 >
 > **使用方式**：先读导读和路线图，再到第 3 章按岗位挑一条主线。每读完一章，跑通对应目录的练习，再用第 5 章的验收题自测。没轮到的章节先当查阅手册。文中版本、默认值和基准数字核对于 2026 年 10 月 29 日。
 >
@@ -36,12 +36,12 @@ MODEL_PROFILE=moe TP=2 bash 01-first-server/serve.sh
 
 ## 1.1 四级路线
 
-二十五章分成四级，每一级有明确的出口能力，前一级的练习是后一级的输入。章节划分参考了 zero-to-sglang 的四段式（概念、手写 mini 引擎、真实引擎前沿、部署与贡献）[[15]](https://github.com/datawhalechina/zero-to-sglang)，但不照搬：vLLM 的核心抽象是“块”和“token 预算”，所以 L2 按块的生命周期排，从分配、命中、驱逐一路读到 kernel 怎么消费块表。手写引擎的部分换成对照 nano-vllm 和主干源码的 CPU 模拟器。
+二十六章分成四级，每一级有明确的出口能力，前一级的练习是后一级的输入。章节划分参考了 zero-to-sglang 的四段式（概念、手写 mini 引擎、真实引擎前沿、部署与贡献）[[15]](https://github.com/datawhalechina/zero-to-sglang)，但不照搬：vLLM 的核心抽象是“块”和“token 预算”，所以 L2 按块的生命周期排，从分配、命中、驱逐一路读到 kernel 怎么消费块表。手写引擎的部分换成对照 nano-vllm 和主干源码的 CPU 模拟器。
 
 - **L1 跑起来（约一周，01 至 03）**：用 `vllm serve` 部署一个模型，跑通 OpenAI 兼容接口；自己算出 KV 能放多少 token，再和启动日志对账；交一份写清负载、并发、版本的压测报告。
 - **L2 读懂内核（三到四周，04 至 10）**：沿一条请求读完 API server、EngineCore、GPU worker 三类进程；把调度器、chunked prefill 与异步调度、BlockPool 与块表、前缀缓存与混合 KV 管理、model runner 与编译、注意力后端逐个拆开。这一级的练习大多在 CPU 上做。
 - **L3 规模化（三到四周，11 至 16）**：多卡并行、量化、投机解码、KV 卸载与连接器、PD 分离、结构化输出与多 LoRA。每章回答同一个问题：这项技术在什么负载下值得开，代价落在哪里。
-- **L4 生产与贡献（持续，17 至 25）**：调参手册、可观测与 profiling、集群路由与 RL、读源码与提 PR，两篇前沿（一个月主干复盘、DeepSeek 开源对 vLLM 的影响），以及三篇部署实战：DeepSeek-V4.1-Flash、Qwen3-32B 和 Qwen3.8-27B，从消费级显卡一路排到 H20，最后一篇是 48 层 GDN 加 16 层全注意力的混合模型。这一级没有终点，章节随上游版本更新。
+- **L4 生产与贡献（持续，17 至 26）**：调参手册、可观测与 profiling、集群路由与 RL、读源码与提 PR，两篇前沿（一个月主干复盘、DeepSeek 开源对 vLLM 的影响），以及三篇部署实战：DeepSeek-V4.1-Flash、Qwen3-32B 和 Qwen3.8-27B，从消费级显卡一路排到 H20，最后一篇是 48 层 GDN 加 16 层全注意力的混合模型；另有一篇专题讲 embedding 与 rerank 这类只有 prefill 的服务怎么配。这一级没有终点，章节随上游版本更新。
 
 ## 1.2 章节落在架构上的位置
 
@@ -94,7 +94,7 @@ V1 引擎把一次推理拆到三类进程里[[16]](https://docs.vllm.ai/en/late
 
 > 💡 **常见误区**：拿 2024 年的 vLLM 源码解析对照主干读。V1 重写后目录、类名几乎全换，调度器也不再分 prefill 和 decode 两个阶段，旧文章里的流程图大多已经不成立。读源码以类名和函数名为锚点，用 grep 定位，不按旧文章里的行号找。
 
-# 第 2 章 · 二十五章清单
+# 第 2 章 · 二十六章清单
 
 下面四张表是系列的完整目录。源码列只写文件名，链接固定到提交 0d6f92a 的完整路径；练习列是配套仓库里的目录名。第一列的章节名直接链到对应文档。
 
@@ -142,8 +142,9 @@ V1 引擎把一次推理拆到三类进程里[[16]](https://docs.vllm.ai/en/late
 | [VLLM-23｜实战｜DeepSeek-V4.1-Flash 部署：消费级显卡与 H20](./23-deepseek-v41-deploy.md) | 614 GB 的权重和 KV 怎么在 RTX PRO 6000、5090、4090 和 H20 / H20-3e 上分；四代架构各走哪套 sparse MLA 与 MoE kernel；Engram 卸载到主机内存的代价；估算和社区实测的对照；最佳卡配置 | [sparse_mla.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/models/deepseek_v41/sparse_mla.py)，[engram.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/config/engram.py)，[mxfp4.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py) | [[9]](https://vllm.ai/blog/2026-10-23-deepseek-v41-flash-pd-wide-ep) | [23-deepseek-v41-deploy](../23-deepseek-v41-deploy) |
 | [VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md) | Qwen3-32B 的权重和 KV 在 4090、5090、L40S、A100、H100 / H20 上怎么分；AWQ / FP8 / NVFP4 各走哪个 kernel；TP2 和两份单卡怎么选；EAGLE3 与 ngram；和 SGLang 默认显存预留的对照；Qwen3.5-27B 混合注意力的差异；最佳卡配置 | [auto_awq.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/model_executor/layers/quantization/auto_awq.py)，[kv_cache.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/model_executor/layers/quantization/kv_cache.py)，[gpu_worker.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/worker/gpu_worker.py) | [[54]](https://arxiv.org/abs/2306.00978)[[57]](https://vllm.ai/blog/2026-04-22-fp8-kvcache)[[62]](https://arxiv.org/abs/2503.01840) | [24-qwen3-32b-deploy](../24-qwen3-32b-deploy) |
 | [VLLM-25｜实战｜Qwen3.8-27B 部署：混合注意力的显存账](./25-qwen38-27b-deploy.md) | Qwen3.8-27B 的 48 层 GDN 线性注意力加 16 层全注意力怎么算显存；六种 checkpoint（BF16 / FP8 / 两种 NVFP4 / INT4 / MXFP4）各放不放得下；GDN 固定状态、混合层块大小为什么抬到 784–1600；5090 / H100 / H200 / B200 分账与 recipe verified 档位；自带 MTP 草稿头怎么开；和 Qwen3-32B 全注意力的 KV 对照 | [Qwen3.8-27B.yaml（vllm-project/recipes 0511d96）](https://github.com/vllm-project/recipes/blob/0511d96d97551a8b0db969b9b179e6f6d198071d/models/Qwen/Qwen3.8-27B.yaml)，[gdn_attn.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/attention/backends/gdn_attn.py)，[gpu_worker.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/worker/gpu_worker.py) | [[1]](https://github.com/vllm-project/recipes/blob/0511d96d97551a8b0db969b9b179e6f6d198071d/models/Qwen/Qwen3.8-27B.yaml)[[2]](https://huggingface.co/Qwen/Qwen3.8-27B)[[12]](https://github.com/vllm-project/vllm/pull/51812) | [25-qwen38-27b-deploy](../25-qwen38-27b-deploy) |
+| [VLLM-26｜专题｜Embedding 与 Rerank 服务：只有 prefill 的引擎怎么配](./26-embedding-rerank.md) | embedding 和 rerank 请求只有一次 prefill，调度器怎么提前结束；Qwen3-Embedding、bge-m3、bge-reranker-v2-m3、Qwen3-Reranker 各要什么起服参数；注意力方向怎样决定 chunked prefill 和 prefix caching 的默认值；H100 上每秒能处理多少条；精排 100 篇的在线算力为什么是召回的 1274 倍；`dimensions` 截维为什么要先声明 Matryoshka | [scheduler.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/core/sched/scheduler.py)，[model.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/config/model.py)，[adapters.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/model_executor/models/adapters.py)，[pooling_params.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/pooling_params.py) | [[8]](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B)[[9]](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B)[[12]](https://arxiv.org/abs/2205.13147) | [26-embedding-rerank](../26-embedding-rerank) |
 
-> 🔑 **本章要点**：四级共二十五章。L1 三章交付“能跑、能算、能测”，L2 七章交付“能读懂和修改 EngineCore 与 worker”，L3 六章交付“能为一个模型设计多卡部署方案”，L4 九章交付“能对线上问题做根因并向上游提 PR”。
+> 🔑 **本章要点**：四级共二十六章。L1 三章交付“能跑、能算、能测”，L2 七章交付“能读懂和修改 EngineCore 与 worker”，L3 六章交付“能为一个模型设计多卡部署方案”，L4 十章交付“能对线上问题做根因并向上游提 PR”。
 
 # 第 3 章 · 三条读法
 
@@ -219,7 +220,7 @@ zero-to-vllm/
 ├── 03-bench/              # 压测脚本（GPU）与结果统计（CPU）
 ├── 04-request-path/ … 10-attention-backend/   # L2：CPU 模拟器 + 主干对照
 ├── 11-parallelism/ … 16-structured-lora/      # L3：账本、模拟器、部署脚本
-└── 17-tuning/ … 25-qwen38-27b-deploy/                   # L4：调参清单、指标解析、插件与 PR 模板
+└── 17-tuning/ … 26-embedding-rerank/                    # L4：调参清单、指标解析、插件与 PR 模板
 ```
 
 约定：文件名以 sim\_ 开头的是 CPU 模拟器，以 gpu\_ 开头的需要 GPU，以 .sh 结尾的是启动或压测脚本，test\_ 开头的是 pytest 用例。源码对照的提交和发行版写在仓库 README 的版本基线里。
@@ -486,3 +487,4 @@ zero-to-vllm/
 - [VLLM-23｜实战｜DeepSeek-V4.1-Flash 部署：消费级显卡与 H20](./23-deepseek-v41-deploy.md)
 - [VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md)
 - [VLLM-25｜实战｜Qwen3.8-27B 部署：混合注意力的显存账](./25-qwen38-27b-deploy.md)
+- [VLLM-26｜专题｜Embedding 与 Rerank 服务：只有 prefill 的引擎怎么配](./26-embedding-rerank.md)

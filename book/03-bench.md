@@ -382,4 +382,4 @@ python3 sim_goodput.py --from-json results/dense/conc-run-01/conc/c64.json --goo
 
 ---
 
-上一章：[VLLM-02｜上手｜推理账本：gpu_memory_utilization、KV 容量与 Roofline](./02-ledger.md) · [目录](./README.md) · 下一章：[VLLM-04｜原理｜请求旅程：API server、EngineCore 与 GPU worker](./04-request-path.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/03-bench.ipynb) · 上一章：[VLLM-02｜上手｜推理账本：gpu_memory_utilization、KV 容量与 Roofline](./02-ledger.md) · [目录](./README.md) · 下一章：[VLLM-04｜原理｜请求旅程：API server、EngineCore 与 GPU worker](./04-request-path.md)

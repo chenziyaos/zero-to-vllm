@@ -1,5 +1,7 @@
 # VLLM-18 可观测与 profiling：指标口径、torch profiler 与 nsys
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/18-observability.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：模拟器、抓取脚本和单测只需要 CPU 和 Python 3 标准库。模拟器复用 `../06-chunked-prefill/sim_chunked.py` 的步进模型。`profile.sh` 需要一张 24 GB 以上的卡（默认 Qwen3-8B）和装好的 vLLM。nsys 段需要 Nsight Systems CLI，proton 段需要 Triton 3.7 以上。SGLang 对照另装 sglang。源码基线：vllm 主干 0d6f92a，sglang 主干 8fabf5e。
 
 | 文件 | 内容 |

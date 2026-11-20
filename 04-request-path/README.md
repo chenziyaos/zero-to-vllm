@@ -1,5 +1,7 @@
 # VLLM-04 请求旅程
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/04-request-path.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 对应文档：VLLM-04｜原理｜请求旅程：API server、EngineCore 与 GPU worker
 
 | 文件 | 运行环境 | 做什么 |

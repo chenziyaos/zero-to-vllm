@@ -1,5 +1,7 @@
 # VLLM-25 实战：Qwen3.8-27B 部署，Gated DeltaNet 混合注意力的显存账
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/25-qwen38-27b-deploy.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：`deploy_planner.py`、`commands.py`、`bench_checks.py` 和 `test_deploy_planner.py` 只依赖 Python 3 标准库，不联网、不需要 GPU，在笔记本上就能把每一档的显存账算出来。`serve.sh` 和 `bench.sh` 要在真机上跑，recipe 的 `min_vllm_version` 是 0.17.0，端到端验证在 `0.26.1rc1.dev608+g99a10304d`，外挂 DFlash2 草稿要 ≥0.28.0。源码行号对应 vllm 主干 0d6f92a，recipe 指 vllm-project/recipes 仓库 0511d96 的 `models/Qwen/Qwen3.8-27B.yaml`。
 
 ## 这个模型和 Qwen3-32B 有什么不一样

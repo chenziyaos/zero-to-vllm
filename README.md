@@ -4,6 +4,12 @@
 
 系列文档的 Markdown 版放在 [`book/`](book/README.md)，从索引页 VLLM-00 读起；各章末尾有上一章、下一章的链接。
 
+## 在 Colab 上跑
+
+[`colab/`](colab/) 下每章一个 notebook，打开后依次执行：克隆本仓库、装 `requirements-cpu.txt`、跑本章单元测试、跑正文里的 CPU 命令。notebook 里的命令都在 Python 3.11 的 CPU 环境下实跑过，退出码为 0；少数演示脚本按设计以非 0 退出（样例本身不达标），已在命令后注明。需要 GPU、模型文件或运行中服务的命令没有放进去。
+
+入口示例：[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/02-ledger.ipynb)
+
 ## 版本基线
 
 - vLLM 主干提交 `0d6f92a`（2026-10-29），发行版 `v0.32.0`（2026-10-18）
@@ -50,8 +56,19 @@
 | `23-deepseek-v41-deploy/` | VLLM-23 DeepSeek-V4.1-Flash 部署实战 | 显存账、kernel 路由、主机内存与 decode 估算、选卡排序、启动与压测脚本 |
 | `24-qwen3-32b-deploy/` | VLLM-24 Qwen3-32B 部署实战 | 显存账、量化格式与 kernel、TP2 对比、decode 估算、选卡排序、启动与压测脚本 |
 | `25-qwen38-27b-deploy/` | VLLM-25 Qwen3.8-27B 部署实战 | Gated DeltaNet 混合注意力的 GDN 状态账、混合层块大小、六种 checkpoint、MTP 接受率、选卡排序、启动与压测脚本 |
+| `26-embedding-rerank/` | VLLM-26 Embedding 与 Rerank 服务 | 只有 prefill 的服务：池化模型的 chunked prefill / prefix caching 默认值、每步预算、bi-encoder 与 cross-encoder 的在线算力账、Matryoshka 截维、四个模型的起法和压测 |
 
-25 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
+26 章已全部发布，每个目录的 README 里都写了运行环境、用法和期望输出。
+
+## 安装依赖
+
+依赖分三档，版本都锁定了：
+
+```bash
+pip install -r requirements-cpu.txt          # 模拟器和单元测试
+pip install -r requirements-gpu.txt          # 有 GPU 的机器
+pip install -r requirements-lora.txt         # 16 章训练 LoRA adapter，CPU 即可，和 GPU 环境分开装
+```
 
 ## 快速试跑
 
@@ -76,3 +93,17 @@ python3 smoke_test.py
 - 官方文档：https://docs.vllm.ai/
 - PagedAttention 论文：https://arxiv.org/abs/2309.06180
 - 同系列 SGLang 对照代码：`../zero-to-sglang`
+
+## 引用
+
+如果本系列对你的工作有帮助，可以这样引用：
+
+```bibtex
+@misc{zero-to-vllm,
+  author       = {chenziyaos},
+  title        = {从 0 开始 vLLM（zero-to-vllm）},
+  year         = {2026},
+  howpublished = {\url{https://github.com/chenziyaos/zero-to-vllm}},
+  note         = {GitHub repository}
+}
+```

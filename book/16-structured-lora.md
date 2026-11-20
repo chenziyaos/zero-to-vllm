@@ -610,6 +610,44 @@ LoRA 预检只核对配置声明与文件存在性：基座仓库和 revision �
 
 多 LoRA 从配置读：[lora.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/config/lora.py) → [base_linear.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/lora/layers/base_linear.py) 的预分配 → [model_manager.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/lora/model_manager.py) 的 LRU 激活 → [lora_shrink_op.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/lora/ops/triton_ops/lora_shrink_op.py) / [lora_expand_op.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/lora/ops/triton_ops/lora_expand_op.py) → [scheduler.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/core/sched/scheduler.py) 搜 `scheduled_loras` → [kv_cache_utils.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/v1/core/kv_cache_utils.py) 的 extra key。SGLang 对照读 `lora_manager.py`、`lora_drainer.py`、`lora_registry.py` 三个文件即可。行号都在 so_lora_matrix.md。
 
+## 11.3 自己训一个 LoRA adapter
+
+前面的实验和模拟器都假设手里已经有 adapter。这一节从零训一个，再检查它能不能被 vLLM 和 SGLang 加载。代码在 [16-structured-lora](../16-structured-lora) 的 `train_lora.py` 和 `check_adapter.py`。训练依赖 torch、transformers 和 peft，CPU 就能跑，和推理环境分开装；检查脚本只用标准库。
+
+```bash
+pip install -r ../requirements-lora.txt
+python3 train_lora.py
+python3 train_lora.py --base Qwen/Qwen3-0.6B --steps 80 --lr 1e-3 --out loras/qwen-city-r8
+python3 train_lora.py --base Qwen/Qwen3-0.6B --rank 64 --out loras/qwen-city-r64
+python3 check_adapter.py loras/*
+python3 test_lora_adapter.py
+```
+
+第一条命令用随机权重的小 Llama 跑几秒，只验证流程；第三条换 rank 64，给第 8 章的多 LoRA 实验凑不同档位。任务是让模型把「城市：巴黎」答成一行 JSON：数据是 40 对城市和国家，最后 4 对留出不参与训练。底座不会自发输出这个格式，训完的 adapter 会，加不加 adapter 一眼就能看出差别。
+
+在 Apple M4 Pro 的 CPU 上实跑 Qwen3-0.6B（float32，batch 8，80 步，学习率 1e-3，r=8，alpha=16，只训 q/k/v/o_proj）：用时 73.3 秒，训练 loss 从 2.3322 降到 0.0005；留出的 4 条 loss 从 2.338 降到 0.057，完全答对从 0 条变成 3 条。可训练参数 2,293,760 个，占总参数 598,343,680 的 0.383%，adapter 文件 9.2 MB、224 个张量。探针「城市：巴西利亚」训练前答成「时间：2023年」，训练后答成 `{"city": "巴西利亚", "country": "巴西"}`。
+
+```plaintext
+== qwen-city-r8
+  底座      Qwen/Qwen3-0.6B
+  r / alpha 8 / 16
+  声明模块  ['v_proj', 'k_proj', 'o_proj', 'q_proj']
+  实际模块  ['k_proj', 'o_proj', 'q_proj', 'v_proj']（224 个张量）
+  vLLM    可以加载
+  SGLang  可以加载
+  vLLM    --enable-lora --max-lora-rank 8 --lora-modules qwen-city-r8=/绝对路径/loras/qwen-city-r8
+  SGLang  --enable-lora --max-lora-rank 8 --lora-target-modules k_proj o_proj q_proj v_proj --lora-paths qwen-city-r8=/绝对路径/loras/qwen-city-r8
+```
+
+检查脚本按两家的加载规则逐条核对，下面几处最容易踩：
+
+- vLLM 的 `--max-lora-rank` 只能取 1、8、16、32、64、128、256、320、512，默认 16（[vllm/config/lora.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/config/lora.py) 第 27 行）。rank 64 的 adapter 不改这个参数会加载失败。
+- vLLM 不支持 DoRA；`modules_to_save` 只接受 `classifier` 和 `score`，把 `lm_head` 或 `embed_tokens` 一起训的 adapter 上不了 vLLM（[vllm/lora/peft_helper.py](https://github.com/vllm-project/vllm/blob/0d6f92a/vllm/lora/peft_helper.py)）。
+- SGLang 不传 `--max-lora-rank` 时取启动时所有 adapter 里最大的 r，之后热加载更大 rank 的 adapter 会报 incompatible；训练时往词表里加了 token 的 adapter，SGLang 拒绝加载。
+- SGLang 的 `--lora-target-modules` 会把 q/k/v_proj 归一成 `qkv_proj`、gate/up_proj 归一成 `gate_up_proj`；只写 `qkv_proj` 而 adapter 还训了 `o_proj`，同样加载失败。
+
+把训好的几个目录放进 `$LORA_DIR`，就能接着跑 11.1 的 `serve_so_lora.sh lora` 和 `lora_bench`。训练和检查在 CPU 上实跑过；GPU 上的加载、输出质量和压测本节没有实测。
+
 > 📌 **核对清单**
 > - 能算出自己模型的 bitmask 列数（ceil(vocab/32)）和 k 步投机下每步 H2D 字节数。
 > - 能说出 vLLM 在哪一行发出非阻塞前向、在哪一步填掩码，为什么填掩码比前向短时不增加 TPOT。
@@ -620,6 +658,7 @@ LoRA 预检只核对配置声明与文件存在性：基座仓库和 revision �
 > - 能算出 max_loras × max_lora_rank 的预分配显存，并在启动日志的 KV cache 可用显存里验证。
 > - 多 adapter 部署把 max_loras 调到热门 adapter 数 + 1，用 `vllm:lora_requests_info` 看 waiting 名单。
 > - 上线新 adapter 权重时换路径或改名，不原地覆盖。
+> - 上线 adapter 前跑 `check_adapter.py`：rank 落在 vLLM 允许的档位里，没有 DoRA，`modules_to_save` 只有分类头。
 
 到这里，vLLM 的功能面已经走完：调度、KV、并行、投机、量化、PD 分离、结构化输出和多 LoRA。每一项都有一组参数，而且它们抢的是同一块显存、同一个 token 预算。下一篇 VLLM-17 把这些参数放到一起：从负载画像出发，定 `max_num_batched_tokens`、`gpu_memory_utilization`、编译档位和 CUDA graph 尺寸，给出一张可以直接照着改的调参手册。
 
@@ -681,4 +720,4 @@ LoRA 预检只核对配置声明与文件存在性：基座仓库和 revision �
 
 ---
 
-上一章：[VLLM-15｜规模｜PD 分离：NIXL、KV 传输与 P/D 感知路由](./15-pd-disagg.md) · [目录](./README.md) · 下一章：[VLLM-17｜生产｜调参手册：预算、显存比例、编译档位与负载画像](./17-tuning.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/16-structured-lora.ipynb) · 上一章：[VLLM-15｜规模｜PD 分离：NIXL、KV 传输与 P/D 感知路由](./15-pd-disagg.md) · [目录](./README.md) · 下一章：[VLLM-17｜生产｜调参手册：预算、显存比例、编译档位与负载画像](./17-tuning.md)

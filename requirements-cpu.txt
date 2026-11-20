@@ -1,0 +1,4 @@
+# CPU 练习：sim_*.py 和 test_*.py 只用 Python 3.11+ 标准库，例外是 02-ledger/kv_cache_timing.py 要 numpy。
+# pytest 是可选的测试运行器，也可以直接 python3 test_xxx.py。
+pytest==9.2.0
+numpy==2.4.6

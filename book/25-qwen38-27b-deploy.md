@@ -797,6 +797,8 @@ vllm bench serve "${common[@]}" \
 
 回到导读的结论：选卡先看架构和权重格式，再看权重放下以后 KV 池还剩多少，最后用真机日志收口；估算负责排掉不可能的档位和解释为什么，recipe 记录负责给 verified 的起点，自己的压测负责做最终决定。下一次再遇到混合注意力模型，先问三件事：多少层是线性注意力、固定状态多大、块被抬到多少——这一篇的规划器九个场景就是按这三个问题组织的，换一个 GDN / Mamba 模型，改常量即可复用。
 
+**延伸阅读**：Maarten Grootendorst 的 [A Visual Guide to Mamba and State Space Models](https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state)（2024 年 2 月）从 SSM、S4 讲到 Mamba 的选择性扫描，适合先弄清「固定大小的状态为什么能替代随长度增长的 KV」。本篇的 GDN / KDA 属于线性注意力一支，和 Mamba 一样按固定状态记账，但递推形式不同，状态大小和显存账以本篇为准。
+
 # 参考文献
 
 按正文首次引用顺序编号，资料截至 2026 年 10 月底。源码以 vllm-project/vllm 主干提交 0d6f92a（2026 年 10 月 29 日）和 v0.32.0 发行版为准；SGLang 对照以 sgl-project/sglang 主干 8fabf5e 为准。
@@ -841,4 +843,4 @@ vllm bench serve "${common[@]}" \
 
 ---
 
-上一章：[VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md) · [目录](./README.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/25-qwen38-27b-deploy.ipynb) · 上一章：[VLLM-24｜实战｜Qwen3-32B 部署：从 4090 到 H20](./24-qwen3-32b-deploy.md) · [目录](./README.md) · 下一章：[VLLM-26｜专题｜Embedding 与 Rerank 服务：只有 prefill 的引擎怎么配](./26-embedding-rerank.md)

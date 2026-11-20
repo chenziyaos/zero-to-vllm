@@ -441,4 +441,4 @@ MODEL_PROFILE=dense TP=2 bash cluster.sh k8s-yaml
 
 ---
 
-上一章：[VLLM-18｜生产｜可观测与 profiling：指标口径、torch profiler 与 nsys](./18-observability.md) · [目录](./README.md) · 下一章：[VLLM-20｜生产｜读源码与提 PR：插件系统、测试与基准](./20-contrib.md)
+[在 Colab 里跑本章 CPU 练习](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/19-cluster-rl.ipynb) · 上一章：[VLLM-18｜生产｜可观测与 profiling：指标口径、torch profiler 与 nsys](./18-observability.md) · [目录](./README.md) · 下一章：[VLLM-20｜生产｜读源码与提 PR：插件系统、测试与基准](./20-contrib.md)
