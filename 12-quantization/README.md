@@ -1,5 +1,7 @@
 # VLLM-12 量化：FP8、INT4、NVFP4 与 KV cache 量化
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/12-quantization.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：模拟器只要 CPU 和 Python 3 标准库；`gpu_quant_eval.sh` 需要一张 H100（NVFP4 最好用 B200）和装好的 vLLM，SGLang 对照另装 sglang。基线 vllm 主干 0d6f92a，sglang 8fabf5e。
 
 | 文件 | 内容 |

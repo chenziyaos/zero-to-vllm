@@ -1,5 +1,7 @@
 # VLLM-21 前沿：一个月主干复盘
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/21-frontier-month.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：`month_review.py` 和 `test_month_review.py` 只依赖 Python 3 标准库，读 `data/` 下的快照，不联网、不需要 git 和 GPU。`export_snapshot.py` 用来重新导出快照，需要本地的 vllm 和 sglang 克隆以及 git。
 
 ## 文件

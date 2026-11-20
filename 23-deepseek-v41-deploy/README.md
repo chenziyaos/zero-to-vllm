@@ -1,5 +1,7 @@
 # VLLM-23 实战：DeepSeek-V4.1-Flash 部署，消费级显卡与 H20
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/23-deepseek-v41-deploy.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：`deploy_planner.py` 和 `test_deploy_planner.py` 只依赖 Python 3 标准库，不联网、不需要 GPU，在笔记本上就能把每一档的显存账算出来。`serve.sh` 和 `bench.sh` 要在真机上跑，需要 vLLM 0.31.0 以上（recipe 的 `min_vllm`），SM120（RTX PRO 6000 / 5090）还需要带 flashinfer-ai/flashinfer#4380 的 FlashInfer。源码行号对应 vllm 主干 0d6f92a。
 
 ## 文件

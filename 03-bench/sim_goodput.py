@@ -205,7 +205,8 @@ def simulate(n=1000, isl=1024, osl=128, rate=math.inf, burstiness=1.0, max_concu
                 r['gen'] += 1
                 r['times'].append(t)
                 if r['gen'] >= r['ol']:
-                    running.remove(r)
+                    if r in running:   # 同一步里先排上、后被抢占的请求已不在 running
+                        running.remove(r)
                     eng.free_blocks += r['blocks']
                     r['blocks'] = 0
                     finished += 1

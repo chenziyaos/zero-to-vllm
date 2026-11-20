@@ -1,5 +1,7 @@
 # VLLM-11 并行：TP、PP、DP、EP 与 EPLB、DCP
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/11-parallelism.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：模拟器只要 CPU 和 Python 3 标准库；`serve_dp_ep.sh` 需要一台 8 卡 H100/H200（跑 DeepSeek-V3 要 8×H200 或两台 8×H100）和装好的 vLLM，SGLang 对照另装 sglang。基线 vllm 主干 0d6f92a，sglang 8fabf5e。
 
 | 文件 | 内容 |

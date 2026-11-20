@@ -1,5 +1,7 @@
 # VLLM-09 Model Runner、torch.compile 与 CUDA Graph
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/09-model-runner.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：模拟器只要 CPU 和 Python 3 标准库；`gpu_cudagraph_modes.sh` 需要一张能放下 Qwen3-8B 的 GPU 和装好的 vLLM。基线 vllm 主干 0d6f92a，sglang 8fabf5e。
 
 | 文件 | 内容 |

@@ -1,5 +1,7 @@
 # VLLM-19 集群与 RL：路由、K8s 部署、sleep mode 与权重同步
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/19-cluster-rl.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：`sim_router.py` 和测试只需要 Python 3 标准库，在 CPU 上就能跑；`cluster.sh` 里的命令需要 GPU、vLLM（0d6f92a）或 SGLang（8fabf5e），K8s 那几段还需要 kubectl。
 
 ## 文件

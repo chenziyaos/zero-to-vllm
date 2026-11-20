@@ -1,0 +1,5 @@
+# GPU 实验：*.sh 启动、压测和部署脚本，以及 20-contrib/plugin_demo。也可以直接用官方镜像 vllm/vllm-openai:v0.32.0。
+# vllm 0.32.0 自带的 torch 是 2.13.0。装完跑一次 `vllm download-kernels`，见 VLLM-00 版本基线。
+# 已用 uv pip compile 在 Python 3.11、Linux x86_64 上解析通过；没有在 GPU 上逐个脚本实跑。
+-r requirements-cpu.txt
+vllm==0.32.0

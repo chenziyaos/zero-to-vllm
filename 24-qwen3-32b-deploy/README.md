@@ -1,5 +1,7 @@
 # VLLM-24 实战：Qwen3-32B 部署，从 4090 到 H20
 
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/24-qwen3-32b-deploy.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+
 运行环境：`deploy_planner.py` 和 `test_deploy_planner.py` 只依赖 Python 3 标准库，不联网、不需要 GPU，在笔记本上就能把每一档的显存账算出来。`serve.sh` 和 `bench.sh` 要在真机上跑，Qwen3-32B 需要 vLLM 0.8.5 以上（recipe 的 `min_vllm`），Qwen3.5-27B 需要 0.17.0 以上。源码行号对应 vllm 主干 0d6f92a。
 
 ## 文件

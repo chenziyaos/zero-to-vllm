@@ -1,0 +1,5 @@
+# 训练 LoRA adapter（16-structured-lora/train_lora.py）用的 CPU 环境，和 GPU 推理环境分开装。
+# 已用 uv pip compile 在 Python 3.11、Linux x86_64 上解析通过；本地在 Apple M4 Pro 的 CPU 上实跑过。
+torch==2.15.0
+transformers==5.23.0
+peft==0.21.3
