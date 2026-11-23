@@ -1,14 +1,14 @@
 # Online edition of book/, published to GitHub Pages by .github/workflows/pages.yml.
 # Local preview: pip install -r docs-site/requirements.txt && mkdocs serve
 site_name: 从 0 开始 vLLM
-site_url: https://chenziyaos.github.io/zero-to-vllm/
+site_url: https://zyaochen.github.io/zero-to-vllm/
 site_description: 按章拆 vLLM：显存账本、调度与抢占、Paged KV、前缀缓存、PD 分离、LoRA 与部署实战。
-repo_url: https://github.com/chenziyaos/zero-to-vllm
-repo_name: chenziyaos/zero-to-vllm
+repo_url: https://github.com/zyaochen/zero-to-vllm
+repo_name: zyaochen/zero-to-vllm
 edit_uri: blob/main/book/
 docs_dir: book
 site_dir: site
-copyright: <a href="https://chenziyaos.github.io/">chenziyaos</a> · MIT
+copyright: <a href="https://zyaochen.github.io/">zyaochen</a> · MIT
 
 theme:
   name: material
@@ -72,4 +72,4 @@ extra:
   repo_prefix: "book"
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/chenziyaos
+      link: https://github.com/zyaochen

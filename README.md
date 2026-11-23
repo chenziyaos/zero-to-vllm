@@ -4,13 +4,13 @@
 
 系列文档的 Markdown 版放在 [`book/`](book/README.md)，从索引页 VLLM-00 读起；各章末尾有上一章、下一章的链接。
 
-在线阅读：<https://chenziyaos.github.io/zero-to-vllm/>，带侧边目录和全文搜索。它由 `mkdocs.yml` 从 `book/` 生成，推送到 main 后自动发布；本地预览：`pip install -r docs-site/requirements.txt && mkdocs serve`。
+在线阅读：<https://zyaochen.github.io/zero-to-vllm/>，带侧边目录和全文搜索。它由 `mkdocs.yml` 从 `book/` 生成，推送到 main 后自动发布；本地预览：`pip install -r docs-site/requirements.txt && mkdocs serve`。
 
 ## 在 Colab 上跑
 
 [`colab/`](colab/) 下每章一个 notebook，打开后依次执行：克隆本仓库、装 `requirements-cpu.txt`、跑本章单元测试、跑正文里的 CPU 命令。notebook 里的命令都在 Python 3.11 的 CPU 环境下实跑过，退出码为 0；少数演示脚本按设计以非 0 退出（样例本身不达标），已在命令后注明。需要 GPU、模型文件或运行中服务的命令没有放进去。
 
-入口示例：[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/02-ledger.ipynb)
+入口示例：[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/02-ledger.ipynb)
 
 ## 版本基线
 
@@ -102,10 +102,10 @@ python3 smoke_test.py
 
 ```bibtex
 @misc{zero-to-vllm,
-  author       = {chenziyaos},
+  author       = {zyaochen},
   title        = {从 0 开始 vLLM（zero-to-vllm）},
   year         = {2026},
-  howpublished = {\url{https://github.com/chenziyaos/zero-to-vllm}},
+  howpublished = {\url{https://github.com/zyaochen/zero-to-vllm}},
   note         = {GitHub repository}
 }
 ```

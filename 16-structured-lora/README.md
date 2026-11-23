@@ -1,6 +1,6 @@
 # VLLM-16 结构化输出与多 LoRA
 
-[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/16-structured-lora.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/16-structured-lora.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
 
 运行环境：模拟器和 `check_adapter.py` 只需要 CPU 和 Python 3 标准库，`train_lora.py` 要装 `requirements-lora.txt`。`serve_so_lora.sh` 需要一张 24 GB 以上的卡（默认 Qwen3-8B），装好 vLLM，把 vLLM 源码克隆到 `$VLLM_SRC`（结构化输出压测脚本在 `benchmarks/` 下）；多 LoRA 实验要在 `$LORA_DIR` 下放若干 PEFT adapter（每个子目录一个）。SGLang 对照另装 sglang。源码基线：vllm 主干 0d6f92a，sglang 主干 8fabf5e。
 

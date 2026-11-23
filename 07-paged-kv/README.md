@@ -1,6 +1,6 @@
 # VLLM-07 PagedAttention：BlockPool、块表与 KV 分配
 
-[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/07-paged-kv.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/07-paged-kv.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
 
 运行环境：CPU，只依赖 Python 3 标准库。基线 vllm 主干 0d6f92a，sglang 8fabf5e。
 
