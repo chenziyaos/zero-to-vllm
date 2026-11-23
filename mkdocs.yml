@@ -1,0 +1,75 @@
+# Online edition of book/, published to GitHub Pages by .github/workflows/pages.yml.
+# Local preview: pip install -r docs-site/requirements.txt && mkdocs serve
+site_name: 从 0 开始 vLLM
+site_url: https://chenziyaos.github.io/zero-to-vllm/
+site_description: 按章拆 vLLM：显存账本、调度与抢占、Paged KV、前缀缓存、PD 分离、LoRA 与部署实战。
+repo_url: https://github.com/chenziyaos/zero-to-vllm
+repo_name: chenziyaos/zero-to-vllm
+edit_uri: blob/main/book/
+docs_dir: book
+site_dir: site
+copyright: <a href="https://chenziyaos.github.io/">chenziyaos</a> · MIT
+
+theme:
+  name: material
+  custom_dir: docs-site/overrides
+  language: zh
+  features:
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: blue
+      toggle: { icon: material/weather-night, name: 切换到暗色 }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: blue
+      toggle: { icon: material/weather-sunny, name: 切换到亮色 }
+  font: false
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search:
+      # lunr.zh needs a server-side segmenter; split on every CJK character instead.
+      lang: en
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])|(?<=[\u3400-\u9fff])|(?=[\u3400-\u9fff])'
+
+hooks:
+  - docs-site/hooks.py
+
+markdown_extensions:
+  - tables
+  - attr_list
+  - md_in_html
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: math
+          class: arithmatex
+          format: !!python/object/apply:pymdownx.arithmatex.arithmatex_fenced_format {kwds: {mode: generic, tag: pre}}
+  - pymdownx.arithmatex:
+      generic: true
+      inline_syntax: [round]
+      block_syntax: [dollar, square]
+
+extra:
+  katex: false
+  repo_prefix: "book"
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/chenziyaos
