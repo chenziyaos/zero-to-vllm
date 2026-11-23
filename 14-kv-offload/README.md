@@ -1,6 +1,6 @@
 # VLLM-14 KV 卸载与连接器：CPU 卸载、LMCache 与 Mooncake
 
-[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/14-kv-offload.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/14-kv-offload.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
 
 运行环境：模拟器只需要 CPU 和 Python 3 标准库。`serve_offload.sh` 需要一张 H100（`canonical` 要 4 张）、装好的 vLLM，以及至少 256 GiB 主机内存；`lmcache` 要另装 LMCache 并先起 `lmcache server`；`mooncake` 要另装 Mooncake 并起 `mooncake_master`；SGLang 对照要另装 sglang。源码基线：vllm 主干 0d6f92a，sglang 主干 8fabf5e。
 

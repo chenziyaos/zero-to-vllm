@@ -1,6 +1,6 @@
 # VLLM-26 Embedding 与 Rerank 服务
 
-[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/26-embedding-rerank.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/26-embedding-rerank.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
 
 运行环境：`sim_pool.py`、`pool_client.py` 和测试只需要 CPU 上的 Python 3 标准库。`serve_pool.sh` 需要一张 GPU 和装好的 vLLM，0.6B 模型 24 GB 显存足够；`rr_qwen` 要用 vLLM 源码里的 jinja 模板，把源码克隆到 `$VLLM_SRC`。源码基线：vllm 主干 0d6f92a，SGLang 对照用主干 8fabf5e。
 

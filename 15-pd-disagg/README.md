@@ -1,6 +1,6 @@
 # VLLM-15 PD 分离：NIXL、KV 传输与 P/D 感知路由
 
-[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chenziyaos/zero-to-vllm/blob/main/colab/15-pd-disagg.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
+[![在 Colab 中打开](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zyaochen/zero-to-vllm/blob/main/colab/15-pd-disagg.ipynb)　CPU 练习和单元测试可以直接在 Colab 里跑。
 
 运行环境：模拟器只需要 CPU 和 Python 3 标准库。`serve_pd_nixl.sh` 需要一台两卡机器（L40S、A100、H100 都行，默认模型 Qwen2.5-7B-Instruct），装好 vLLM 和 NIXL（`pip install nixl`），并把 vLLM 源码克隆到 `$VLLM_SRC`（proxy 脚本在源码里）；SGLang 对照要另装 sglang 和 sglang-router。源码基线：vllm 主干 0d6f92a，sglang 主干 8fabf5e。
 
