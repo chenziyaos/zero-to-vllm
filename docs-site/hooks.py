@@ -5,11 +5,16 @@ the source files are never changed.
 
 - nav: built from the chapter headings ("PREFIX-NN｜stage｜title" or "part NN｜title"),
   grouped by stage, or by sub-directory (extra.nav_sections) when chapters live in folders.
+  extra.nav_stages ({stage: section name}) collects every chapter of a stage into one
+  section, for series whose numbering interleaves stages.
 - math: GitHub's inline $`...`$ becomes \\( ... \\) for pymdownx.arithmatex.
 - blank lines: GitHub starts a list or table right after a paragraph line;
   Python-Markdown needs a blank line first, so one is inserted.
 - links: relative Markdown and HTML links that leave the site (code folders, scripts,
   labs) point to the file on GitHub instead of a missing page.
+- search: the lunr bundled in the search worker keys TokenSet states as label + child id
+  with no delimiter, so a digit label can merge two different states; on a large index
+  some queries then throw. A delimiter is added after the id in the built worker.
 """
 
 import os
@@ -70,6 +75,14 @@ def on_config(config):
         for folder, name in sections.items():
             pages = [p for _, group in _chapters(docs, folder) for p in group]
             nav.append({name: pages})
+    elif config["extra"].get("nav_stages"):
+        by_stage = {}
+        for stage, pages in _chapters(docs):
+            by_stage.setdefault(stage, []).extend(pages)
+        for stage, name in config["extra"]["nav_stages"].items():
+            nav.append({name: by_stage.pop(stage)})
+        if by_stage:
+            raise ValueError(f"chapters with a stage missing from extra.nav_stages: {sorted(by_stage)}")
     else:
         for stage, pages in _chapters(docs):
             nav.append({stage: pages} if stage else pages[0])
@@ -153,3 +166,21 @@ def on_page_markdown(markdown, page, config, files):
         out.append(line)
         prev = line
     return "\n".join(out)
+
+
+LUNR_KEY = "e=e+s+o.id}return e"
+
+
+def _patch_lunr(js):
+    """Add a delimiter after the child id in lunr's TokenSet key; raise if the code moved."""
+    if js.count(LUNR_KEY) != 1:
+        raise ValueError("lunr TokenSet.toString not found in the search worker; recheck the patch")
+    return js.replace(LUNR_KEY, 'e=e+s+o.id+"|"}return e')
+
+
+def on_post_build(config):
+    workers = list(Path(config["site_dir"], "assets", "javascripts", "workers").glob("search.*.js"))
+    if not workers:
+        raise ValueError("search worker not found")
+    for path in workers:
+        path.write_text(_patch_lunr(path.read_text(encoding="utf-8")), encoding="utf-8")

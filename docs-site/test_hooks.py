@@ -49,6 +49,25 @@ class HooksTest(unittest.TestCase):
         )
         self.assertEqual(hooks._label("Zero To SGLang"), ("Zero To SGLang", None))
 
+    def test_nav_stages(self):
+        docs = Path(self.tmp.name) / "book"
+        for name, title in [("README.md", "LLM-00｜总览｜地图"), ("01-a.md", "LLM-01｜地基｜甲"),
+                            ("02-b.md", "LLM-02｜系统｜乙"), ("03-c.md", "LLM-03｜地基｜丙")]:
+            (docs / name).write_text(f"# {title}\n")
+        config = {"docs_dir": str(docs), "extra": {"nav_stages": {"地基": "地基层", "系统": "系统层"}}}
+        nav = hooks.on_config(config)["nav"]
+        self.assertEqual(nav[1:], [{"地基层": [{"01 甲": "01-a.md"}, {"03 丙": "03-c.md"}]},
+                                   {"系统层": [{"02 乙": "02-b.md"}]}])
+        config["extra"]["nav_stages"] = {"地基": "地基层"}
+        with self.assertRaises(ValueError):
+            hooks.on_config(config)
+
+    def test_patch_lunr(self):
+        js = 'x;for(i=0;i<n;i++){var s=r[i],o=this.edges[s];e=e+s+o.id}return e},y'
+        self.assertIn('e=e+s+o.id+"|"}return e', hooks._patch_lunr(js))
+        with self.assertRaises(ValueError):
+            hooks._patch_lunr("minified differently")
+
     def test_inline_math(self):
         self.assertEqual(self.render("除以 $`\\sqrt{d}`$ 即可"), "除以 \\(\\sqrt{d}\\) 即可")
 
