@@ -15,23 +15,27 @@ theme:
   custom_dir: docs-site/overrides
   language: zh
   features:
+    - navigation.instant
+    - navigation.instant.progress
     - navigation.sections
+    - navigation.path
     - navigation.footer
     - navigation.top
     - navigation.tracking
     - search.highlight
+    - content.action.view
     - content.code.copy
     - toc.follow
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: white
-      accent: blue
+      primary: custom
+      accent: custom
       toggle: { icon: material/weather-night, name: 切换到暗色 }
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: black
-      accent: blue
+      primary: custom
+      accent: custom
       toggle: { icon: material/weather-sunny, name: 切换到亮色 }
   font: false
   icon:
@@ -54,6 +58,7 @@ markdown_extensions:
   - footnotes
   - toc:
       permalink: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
